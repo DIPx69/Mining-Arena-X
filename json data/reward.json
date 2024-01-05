@@ -1,0 +1,8 @@
+{
+  "text": "5x Water 💦\n\"Claim Me\" Title",
+  "data": {
+    "$inc": {"water": 5},
+    "$push": {"title_list": {"$each": ["Claim Me"]}}
+  },
+  "note": "Here Is The 1ST Reward With Title"
+}
