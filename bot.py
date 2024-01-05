@@ -33,9 +33,6 @@ from telebot import apihelper
 from telebot.types import Dice
 from telebot.async_telebot import *
 
-# Importing Flask App
-from keep_alive import keep_alive
-
 # Importing DNS And Database Module
 import motor.motor_asyncio
 import dns.resolver
@@ -1123,5 +1120,4 @@ async def send_text(message):
        await command.seeds_buy_custom(message,item_name,ammout)
 print("BOT IS RUNNING..")
 if __name__ == "__main__":
-   keep_alive()
    asyncio.run(bot.polling(non_stop=True))

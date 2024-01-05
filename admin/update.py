@@ -31,10 +31,6 @@ async def info(call):
      uptime_text = f"{days}d:{hours}h:{minutes}m:{seconds}s"
    else:
      uptime_text = f"{hours}h:{minutes}m:{seconds}s"
-   url = "https://lb-api.dipdey.repl.co/"
-   async with aiohttp.ClientSession() as session:
-     async with session.get(url) as response:
-       data = await response.json()
    system_info = {
     "System": platform.system(),
     "Node": platform.node(),
@@ -42,7 +38,7 @@ async def info(call):
     "Version": platform.version(),
     "Machine": platform.machine()}
    system_info_string = "\n".join([f"{key}: {value}" for key, value in system_info.items()])
-   await bot.answer_callback_query(call.id, text=f"Server Status\nBot Uptime: {uptime_text}\nLeaderboard API: {data['uptime']}\n\n{system_info_string}",show_alert=True)
+   await bot.answer_callback_query(call.id, text=f"Server Status\nBot Uptime: {uptime_text}\n{system_info_string}",show_alert=True)
 async def leadboard_update(message):
   if message.chat.id != ownerid:
      userx = message.from_user
