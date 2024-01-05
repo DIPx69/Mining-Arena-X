@@ -983,7 +983,10 @@ async def handle_callback_query(call):
     if call.data =="ban_list":
       await admin.banlist(call)
     if call.data =="farming_menu":
-       await farm.menu(call)
+       if call.from_user.id != ownerid:
+        await bot.answer_callback_query(call.id, text=f"Farming Is Disabled Temporary", show_alert=True)
+       else:
+        await farm.menu(call)
     if call.data == "harvest":
       confirm = await farm.harvest(call)
       if confirm:
