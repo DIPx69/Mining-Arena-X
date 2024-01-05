@@ -1,0 +1,10 @@
+aiofiles
+aiohttp
+dnspython
+Flask
+httpx
+motor
+pyTelegramBotAPI
+python-dotenv
+pytz
+requests
