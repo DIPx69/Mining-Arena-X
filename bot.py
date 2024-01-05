@@ -1118,6 +1118,6 @@ async def send_text(message):
        item_name = message.reply_to_message.text.split()[1].lower()
        item_name += "_seed"
        await command.seeds_buy_custom(message,item_name,ammout)
-print("BOT IS RUNNING..")
+print("BOT IS RUNNING.")
 if __name__ == "__main__":
    asyncio.run(bot.polling(non_stop=True))
