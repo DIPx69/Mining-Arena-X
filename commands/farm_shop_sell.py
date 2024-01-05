@@ -424,7 +424,7 @@ async def sell_seed(call,seed_name,reference):
 
 async def seeds_sell_confirm(message,seed_name,ammout):
    seed_name = f"{seed_name}_seed"
-   filename = f'json data/active_window.json'
+   filename = f'json_data/active_window.json'
    user_id = message.chat.id
    async with aiofiles.open(filename, 'r') as f:
        window = json.loads(await f.read())

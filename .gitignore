@@ -11,3 +11,4 @@ games/__pycache__
 venv/
 pyproject.toml
 poetry.lock
+json_data/

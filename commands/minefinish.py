@@ -25,7 +25,7 @@ async def minefinish(call):
   delete_button = types.InlineKeyboardButton(text=f'✖️ DELETE ✖️', callback_data='delete')
   keyboard.add(delete_button) 
   try:
-    filename = f'json data/active_window.json'
+    filename = f'json_data/active_window.json'
     user_id = call.from_user.id
     async with aiofiles.open(filename, 'r') as f:
        window = json.loads(await f.read())

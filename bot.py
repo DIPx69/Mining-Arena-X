@@ -534,7 +534,7 @@ async def remove(message):
          username = username.replace("_", "\\_")
          await db.drop_collection(idx)
          try:
-           filename = f'json data/active_window.json'
+           filename = f'json_data/active_window.json'
            async with aiofiles.open(filename, 'r') as f:
             window = json.loads(await f.read())
            try:
@@ -607,7 +607,7 @@ async def handle_callback_query(call):
       return 0
     user_id = int(call.from_user.id)
     message_id = int(call.message.message_id)
-    filename = f'json data/active_window.json'
+    filename = f'json_data/active_window.json'
     async with aiofiles.open(filename, 'r') as f:
      window = json.loads(await f.read())
     if str(user_id) in window:

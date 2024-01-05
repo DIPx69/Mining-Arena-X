@@ -21,23 +21,23 @@ dns.resolver.default_resolver.nameservers=['8.8.8.8']
 client = motor.motor_asyncio.AsyncIOMotorClient(server)
 bot = AsyncTeleBot(token)
 async def add_to_claim_list(call):
-  filename = f'json data/claimed_user.json'
+  filename = f'json_data/claimed_user.json'
   async with aiofiles.open(filename, 'r') as f:
    claimed_user = json.loads(await f.read())
   claimed_user.append(call.from_user.id)
   async with aiofiles.open(filename, 'w') as f:
    await f.write(json.dumps(claimed_user))
 async def count_of_claimer():
-  filename = f'json data/claimed_user.json'
+  filename = f'json_data/claimed_user.json'
   async with aiofiles.open(filename, 'r') as f:
    claimed_user = json.loads(await f.read())
   return len(claimed_user)
 async def claim_reward(message):
   user_id = message.from_user.id
-  filename_1 = f'json data/reward.json'
+  filename_1 = f'json_data/reward.json'
   async with aiofiles.open(filename_1, 'r') as f:
    reward_data = json.loads(await f.read())
-  filename_2 = f'json data/claimed_user.json'
+  filename_2 = f'json_data/claimed_user.json'
   async with aiofiles.open(filename_2, 'r') as f:
    claimed_user = json.loads(await f.read())
   text = f"""```Rewards
@@ -66,7 +66,7 @@ async def claim_reward(message):
 async def claim_them(call):
    timestamp = int(time.time())
    idx = str(call.from_user.id)
-   filename = f'json data/reward.json'
+   filename = f'json_data/reward.json'
    async with aiofiles.open(filename, 'r') as f:
      reward_data = json.loads(await f.read())
    data = reward_data["data"]

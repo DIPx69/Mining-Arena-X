@@ -46,7 +46,7 @@ async def active_miner_verify(call,thistime):
 async def command_verify(call):
    user_id = int(call.from_user.id)
    message_id = int(call.message.message_id)
-   filename = f'json data/active_window.json'
+   filename = f'json_data/active_window.json'
    async with aiofiles.open(filename, 'r') as f:
      window = json.loads(await f.read())
    print(window)
@@ -55,7 +55,7 @@ async def command_verify(call):
      await bot.answer_callback_query(call.id,text=f"Command Duplication\n\n{message_text}", show_alert=True)
      return 0
 async def update_window(call):
-    filename = f'json data/active_window.json'
+    filename = f'json_data/active_window.json'
     async with aiofiles.open(filename, 'r') as f:
        userwindow = json.loads(await f.read())
     userwindow[str(call.from_user.id)] = {
@@ -66,7 +66,7 @@ async def update_window(call):
     async with aiofiles.open(filename, 'w') as f:
         await f.write(json.dumps(userwindow))
 async def update_window_msg(message):
-    filename = f'json data/active_window.json'
+    filename = f'json_data/active_window.json'
     async with aiofiles.open(filename, 'r') as f:
      userwindow = json.loads(await f.read())
     userwindow[str(message.chat.id)] = {
@@ -78,7 +78,7 @@ async def update_window_msg(message):
        await f.write(json.dumps(userwindow))
 async def removeid(call):
     user_id = int(call.from_user.id)
-    filename = f'json data/active_window.json'
+    filename = f'json_data/active_window.json'
     async with aiofiles.open(filename, 'r') as f:
        window = json.loads(await f.read())
     try:

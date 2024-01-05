@@ -162,7 +162,7 @@ async def seeds_buy_custom(message,seeds_name,ammout):
     "broccoli_seed": "🥦",
     "watermelon": "🍉",
     "watermelon_seed": "🍉"}
-   filename = f'json data/active_window.json'
+   filename = f'json_data/active_window.json'
    user_id = message.chat.id
    async with aiofiles.open(filename, 'r') as f:
        window = json.loads(await f.read())

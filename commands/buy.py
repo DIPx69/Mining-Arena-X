@@ -92,7 +92,7 @@ async def xpboost_custom(call):
    await bot.send_message(call.from_user.id,txt,parse_mode="Markdown",reply_markup=keyboard)
 
 async def minex_buy_confirm(message,ammout):
-   filename = f'json data/active_window.json'
+   filename = f'json_data/active_window.json'
    user_id = message.chat.id
    async with aiofiles.open(filename, 'r') as f:
        window = json.loads(await f.read())
@@ -122,7 +122,7 @@ async def minex_buy_confirm(message,ammout):
      await asyncio.gather(bot.edit_message_text(f"*You need to provide a real amount*",message.chat.id,message_id,parse_mode="Markdown"),bot.delete_message(message.chat.id,message.reply_to_message.id),bot.delete_message(message.chat.id,message.id),command.send_home_v2(message)) 
 
 async def xpboost_buy_confirm(message,ammout):
-   filename = f'json data/active_window.json'
+   filename = f'json_data/active_window.json'
    user_id = message.chat.id
    async with aiofiles.open(filename, 'r') as f:
        window = json.loads(await f.read())
