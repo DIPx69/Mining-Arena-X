@@ -1,8 +1,8 @@
 {
-  "text": "5x Water 💦\n\"Claim Me\" Title",
+  "text": "10M Coins 💰\n5 XP Boosts 🌟\n5 MineX Boosts ⛏️\n\"I Am Back\" Title",
   "data": {
-    "$inc": {"water": 5},
-    "$push": {"title_list": {"$each": ["Claim Me"]}}
+    "$inc": {"water": 5,"coin":100000,"xpboost":5,"minex":5},
+    "$push": {"title_list": {"$each": ["I Am Back"]}}
   },
-  "note": "Here Is The 1ST Reward With Title"
+  "note": "Apologies for the downtime!\nAccept these rewards as a gesture of goodwill"
 }
