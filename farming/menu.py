@@ -36,8 +36,15 @@ async def menu(call):
    back_button = types.InlineKeyboardButton(text='🔙 Go Back',callback_data='main_menu')
    keyboard.add(use_item,harvest)
    keyboard.add(farm_refresh,back_button)
+   name = ""
+   if call.from_user.first_name is not None:
+     name += call.from_user.first_name
+   if call.from_user.last_name is not None:
+     name += " " + call.from_user.last_name
+   if name == "":
+     name = "God"
    farming_text = f"""
-   {call.from_user.first_name} {call.from_user.last_name}'s Farm
+   {name}'s Farm
 
 Progress
 """

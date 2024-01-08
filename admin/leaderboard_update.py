@@ -1,10 +1,8 @@
 import telebot
 import os
-import config
+import json 
 import time
-import commands as command
-import platform
-import aiohttp
+import aiofiles
 import dns.resolver
 from telebot.async_telebot import *
 import motor.motor_asyncio
@@ -14,62 +12,71 @@ dns.resolver.default_resolver=dns.resolver.Resolver(configure=False)
 dns.resolver.default_resolver.nameservers=['8.8.8.8']
 client = motor.motor_asyncio.AsyncIOMotorClient(server)
 bot = AsyncTeleBot(token)
-ownerid = 1794942023
-delay = config.leaderboard_uptime_delay
-sign = "🔴"
-total_update = 0
-uptime_start = int(time.time())
 leaderboard_data = {}
-async def info(call):
-   global total_update
-   uptime_seconds = int(time.time() - uptime_start)
-   days = uptime_seconds // (24 * 3600)
-   hours = (uptime_seconds % (24 * 3600)) // 3600
-   minutes = (uptime_seconds % 3600) // 60
-   seconds = uptime_seconds % 60
-   if days > 0:
-     uptime_text = f"{days}d:{hours}h:{minutes}m:{seconds}s"
-   else:
-     uptime_text = f"{hours}h:{minutes}m:{seconds}s"
-   system_info = {
-    "System": platform.system(),
-    "Node": platform.node(),
-    "Release": platform.release(),
-    "Version": platform.version(),
-    "Machine": platform.machine()}
-   system_info_string = "\n".join([f"{key}: {value}" for key, value in system_info.items()])
-   await bot.answer_callback_query(call.id, text=f"Server Status\nBot Uptime: {uptime_text}\n{system_info_string}",show_alert=True)
-async def leadboard_update(message):
-  if message.chat.id != ownerid:
-     userx = message.from_user
-     username = userx.username
-     username = username.replace("_", "\\_")
-     await bot.send_message(ownerid,f'@{username} *({message.chat.id})* Trying To Run Admin Command',parse_mode="Markdown")
-  else:
-    start = time.time()
-    send = await bot.send_message(message.chat.id,"*UPDATING LEADERBOARD*",parse_mode="Markdown")
-    await updateleaderboard()
-    await bot.edit_message_text(f"*LEADERBOARD UPDATED*\n{(time.time()-start)} Sec",message.chat.id,send.message_id,parse_mode="Markdown")
+mode = False
+uptime_start = int(time.time())
+async def addToHistory(name:str,mode:str, amount:str):
+   async with aiofiles.open("history.json", 'r') as f:
+     data = json.loads(await f.read())
+   len_history = len(data)
+   data = {str(int(key)+1): message for key, message in data.items()}
+   data["1"] = {
+     "name":name.strip(),
+     "mode":mode.strip(),
+     "amount":amount.strip(),
+     "timestamp": int(time.time())
+   }
+   sorted_history = sorted(data.items(), key=lambda x: int(x[0]))
+   sorted_history_dict = {k: v for k, v in sorted_history}
+   if len(sorted_history_dict) >= 16:
+     del sorted_history_dict[str(16)]
+   async with aiofiles.open("history.json", 'w') as f:
+     await f.write(json.dumps(sorted_history_dict))
+   return sorted_history_dict
+async def numtotext(number):
+    abbreviations = [
+        (1e12, 'T'),
+        (1e9, 'B'),
+        (1e6, 'M'),
+        (1e3, 'K')
+    ]
+    for factor, suffix in abbreviations:
+        if number >= factor:
+            abbreviated = number / factor
+            return f"{abbreviated:.2f}{suffix}"
+    return str(number)
 async def fetch_user_data(user_id):
     db = client["user"]
     user = await bot.get_chat(user_id)
     username = user.username
     if username:
-        username = username.replace("_", "\\_")
+       username = username.replace("_", "\\_")
     else:
-        username = f"User {user_id}"
+       username = f"User {user_id}"
     collection = db[user_id]
     leaderboard_data_coin = await collection.find().sort('coin', -1).to_list(10)
     leaderboard_data_mine = await collection.find().sort('mymine', -1).to_list(10)
     leaderboard_data_level = await collection.find().sort('level', -1).to_list(10)
     leaderboard_data_prestige = await collection.find().sort('prestige', -1).to_list(10)
-
     leaderboard_coin_get = [(username, entry.get('coin', 0)) for entry in leaderboard_data_coin]
     leaderboard_mine_get = [(username, entry.get('mymine', 0)) for entry in leaderboard_data_mine]
     leaderboard_level_get = [(username, entry.get('lvl', 0)) for entry in leaderboard_data_level]
     leaderboard_prestige_get = [(username, entry.get('prestige', 0)) for entry in leaderboard_data_prestige]
-
     return leaderboard_coin_get, leaderboard_mine_get, leaderboard_level_get, leaderboard_prestige_get
+
+async def request_update(message):
+   global mode
+   if mode == False:
+     mode = True
+     await bot.send_message(message.chat.id,"Turned On")
+     while True:
+       print("Leadboard Updating")
+       await updateleaderboard()
+       print("Leadboard Updated")
+       await asyncio.sleep(60)
+   else:
+     await bot.send_message(message.chat.id,"Already On")
+
 async def updateleaderboard():
     leaderboard_coin = []
     leaderboard_mine = []
@@ -97,34 +104,36 @@ async def updateleaderboard():
     top_text = []
     for index_coin, entry_coin in enumerate(leaderboard_coin[:10], start=1):
         username, coin = entry_coin
-        coin = await command.numtotext(coin)
+        coin = await numtotext(coin)
         if index_coin == 1:
           new_username = username.replace("\\_","_")
           top_text += [f"COIN || @{new_username} || {coin}"]
         leaderboard_text_coin += f"*[{index_coin}]* @{username} Coins: *{coin}*\n"
     for index_mine, entry_mine in enumerate(leaderboard_mine[:10], start=1):
         username, mymine = entry_mine
-        mymine = await command.numtotext(mymine)
+        mymine = await numtotext(mymine)
         if index_mine == 1:
           new_username = username.replace("\\_","_")
           top_text += [f"MINE || @{new_username} || {mymine}"]
         leaderboard_text_mine += f"*[{index_mine}]* @{username} Total Mining: *{mymine}*\n"
     for index_level, entry_level in enumerate(leaderboard_level[:10], start=1):
         username, level = entry_level
-        level = await command.numtotext(level)
+        level = await numtotext(level)
         if index_level == 1:
           new_username = username.replace("\\_","_")
           top_text += [f"LEVEL || @{new_username} || {level}"]
         leaderboard_text_level += f"*[{index_level}]* @{username} Level: *{level}*\n"
     for index_prestige, entry_prestige in enumerate(leaderboard_prestige[:10], start=1):
         username, prestige = entry_prestige
-        prestige = await command.numtotext(prestige)
+        prestige = await numtotext(prestige)
         if index_prestige == 1:
           new_username = username.replace("\\_","_")
           top_text += [f"PRESTIGE || @{new_username} || {prestige}"]
         leaderboard_text_prestige += f"*[{index_prestige}]* @{username} Prestige: *{prestige}*\n"
     top_text_x = random.choice(top_text)
-    await bot.set_my_commands([telebot.types.BotCommand("top", f"{top_text_x}"),telebot.types.BotCommand("start", "Start"),telebot.types.BotCommand("claim", "Claim Free Rewards"),telebot.types.BotCommand("leaderboard", "Leaderboard"),
+    split_top_text = top_text_x.split("||")
+    addToHistory_data = await addToHistory(split_top_text[1],split_top_text[0],split_top_text[2])
+    await bot.set_my_commands([telebot.types.BotCommand("top", f"{top_text_x}"),telebot.types.BotCommand("start", "Start"),telebot.types.BotCommand("claim","Claim Free Rewards "),telebot.types.BotCommand("leaderboard", "Leaderboard"),
     telebot.types.BotCommand("profile", "View Profile"),
     telebot.types.BotCommand("games", "Available Games"),
     telebot.types.BotCommand("quiz", "Play Trivia"),
@@ -158,7 +167,8 @@ async def updateleaderboard():
             'leveltime': nowtime,
             'level': leaderboard_text_level,
             'prestigetime': nowtime,
-            'prestige': leaderboard_text_prestige
+            'prestige': leaderboard_text_prestige,
+            "history":addToHistory_data
         }
     }
     await datack.update_one(query, updatex)

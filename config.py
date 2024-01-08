@@ -116,3 +116,7 @@ maxcoin = 2500000
 # Prestige Shop Multi Config
 itemmul = 0.25
 xpmul = 0.25
+
+# Game Bet Data
+min_bet = 5000000 # 5M
+max_bet = 50000000 # 50M

@@ -11,3 +11,4 @@ from .ban import *
 from .unban import *
 from .maintenance import *
 from .post import *
+from .leaderboard_update import *

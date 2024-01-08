@@ -23,7 +23,23 @@ async def send_dart(message):
      getcoin = message.text.split()[1]
      getcoin = await command.txttonum(getcoin)
    except:
-     await bot.reply_to(message,"*Provide a Bet Ammout*\nExample: /dart 100k",parse_mode="Markdown")
+     text = f"""
+```
+Provide a Bet Ammout
+``````Example
+/dart 100k
+```
+ """
+     await bot.reply_to(message,text,parse_mode="Markdown")
+     return 0
+   if not (config.min_bet <= getcoin <= config.max_bet):
+     text = f"""
+```
+Minimum Bet: {await command.numtotext(config.min_bet)}
+Maximum Bet: {await command.numtotext(config.max_bet)}
+```
+"""
+     await bot.reply_to(message,text,parse_mode="Markdown")
      return 0
    userdb = client["user"]
    userdatack = userdb[str(message.from_user.id)]

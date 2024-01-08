@@ -25,6 +25,7 @@ import clicking as click
 import farming as farm
 import admin
 import games as game
+import slash_command as slash
 from commands.trivia import chat_timers,poll_track
 
 # Importing Telebot Modules
@@ -47,12 +48,38 @@ ownerid = 1794942023
 uptime_start = time.time()
 anti_spam = {}
 use_anti_spam = {}
+
+# Slash Command Integration [6 Jan]
+@bot.message_handler(commands=['buy'])
+async def buy(message):
+   await slash.print_log(message)
+   status = await slash.lock(message)
+   if status:
+     await slash.buy(message)
+     await slash.unlock(message)
+ 
+# Slash Command Integration [6 Jan]
+@bot.message_handler(commands=['sell'])
+async def sell(message):
+   await slash.print_log(message)
+   status = await slash.lock(message)
+   if status:
+     await slash.sell(message)
+     await slash.unlock(message)
+
+# Slash Command Integration [6 Jan]
+@bot.message_handler(commands=['inventory'])
+async def inventory(message):
+   await slash.print_log(message)
+   status = await slash.lock(message)
+   if status:
+     await slash.inventory(message)
+     await slash.unlock(message)
+# Slash Command /top
 @bot.message_handler(commands=['top'])
-async def quiz(message):
-   db = client['leadboard']
-   datack = db["data"]
-   datafind = await datack.find_one()
-   history = datafind['history']
+async def top(message):
+   async with aiofiles.open("admin/history.json", 'r') as f:
+     history = json.loads(await f.read())
    history_text = "*[Featured Player History]*\n"
    for every in history:
      timestamp = history[every]["timestamp"]
@@ -63,13 +90,16 @@ async def quiz(message):
      history_text += f'*[{every}]* {history[every]["name"]} {history[every]["mode"]} {history[every]["amount"]}\n'
    history_text = history_text.replace("_","\_")
    await bot.send_message(message.chat.id,history_text,parse_mode="Markdown")
-
+# Slash Command /claim
 @bot.message_handler(commands=['claim'])
 async def claim(message):
    if message.chat.type == "private":
      await command.claim_reward(message)
    else:
      await bot.reply_to(message,"*This Command Is Only For Private Message*",parse_mode="Markdown")
+
+# Slash Command /quiz
+
 @bot.message_handler(commands=['quiz'])
 async def quiz(message):
    maintenance_info = await maintenance_check(message)
@@ -80,6 +110,8 @@ async def quiz(message):
    else:
      poll_track[str(message.from_user.id)] = {'on':69}
      await command.trivia_group(message)
+
+# Admin Command || /unban & /u
 @bot.message_handler(commands=['unban','u'])
 async def unbanidx(message):
    user = message.from_user
@@ -89,6 +121,8 @@ async def unbanidx(message):
      await bot.send_message(ownerid,f'@{username} *({message.from_user.id})* Trying To Run Admin Command',parse_mode="Markdown")
    else:
      await admin.unban(message)
+
+# Admin Command || /ban & /b
 @bot.message_handler(commands=['ban','b'])
 async def banidx(message):
    user = message.from_user
@@ -98,6 +132,8 @@ async def banidx(message):
      await bot.send_message(ownerid,f'@{username} *({message.from_user.id})* Trying To Run Admin Command',parse_mode="Markdown")
    else:
      await admin.ban(message)
+
+# Slash Command || /id
 @bot.message_handler(commands=['id'])
 async def getid(message):
     if message.reply_to_message is not None and message.chat.type == "supergroup":
@@ -107,6 +143,8 @@ async def getid(message):
          await bot.send_message(message.chat.id,f"This Command Is Only For Group Chat\nJOIN @MiningArenaChats")
     elif message.reply_to_message is None:
          await bot.reply_to(message,f"Reply To User Message To Get Their ID")
+
+# Slash Command || /games
 @bot.message_handler(commands=['games'])
 async def send_initial_button(message):
     maintenance_info = await maintenance_check(message)
@@ -123,6 +161,8 @@ async def send_initial_button(message):
        await bot.send_message(message.chat.id,txt,parse_mode="MarkdownV2",reply_markup=markup) 
     else:
       await bot.reply_to(message,txt,parse_mode="MarkdownV2") 
+
+# Slash Command || Only In Group Commands
 @bot.message_handler(func=lambda message: message.chat.type == 'private',commands=['roll','dart','basket','profile','ball','leaderboard','ttc','quiz'])
 async def send_txt(message):
     maintenance_info = await maintenance_check(message)
@@ -135,126 +175,70 @@ async def send_txt(message):
     markup.row(button1)
     command_name = message.text.split()[0]
     await bot.send_message(message.chat.id,f"{command_name} *Command Is Only For Official Group Chat*",parse_mode="Markdown",reply_markup=markup)
-@bot.message_handler(func=lambda message: message.chat.type == 'supergroup',commands=['roll'])
+
+# Slash Command || Game || /roll
+@bot.message_handler(func=lambda message: message.chat.type != 'private',commands=['roll'])
 async def gamedice(message):
     maintenance_info = await maintenance_check(message)
     if maintenance_info == True:
      return 0
     await game.send_dice(message)
-@bot.message_handler(func=lambda message: message.chat.type == 'supergroup',commands=['dart'])
+
+# Slash Command || Game || /dart
+@bot.message_handler(func=lambda message: message.chat.type != 'private',commands=['dart'])
 async def gamedart(message):
     maintenance_info = await maintenance_check(message)
     if maintenance_info == True:
      return 0
     await game.send_dart(message)
-@bot.message_handler(func=lambda message: message.chat.type == 'supergroup',commands=['basket'])
+
+# Slash Command || Game || /dart
+@bot.message_handler(func=lambda message: message.chat.type != 'private',commands=['basket'])
 async def gamebasketball(message):
    maintenance_info = await maintenance_check(message)
    if maintenance_info == True:
      return 0 
    await game.send_basketball(message)
-@bot.message_handler(func=lambda message: message.chat.type == 'supergroup',commands=['ball'])
+
+# Slash Command || Game || /ball
+@bot.message_handler(func=lambda message: message.chat.type != 'private',commands=['ball'])
 async def gamefootball(message):
    maintenance_info = await maintenance_check(message)
    if maintenance_info == True:
      return 0
    await game.send_football(message)
+# Slash Command /add
 @bot.message_handler(commands=['add'])
 async def title_add(message):
    await command.title_add(message)
+
+# idk
 @bot.message_handler(commands=['titlex'])
 async def title(message):
    await command.title(message)
+
+# Admin Command || /title || Add Title
 @bot.message_handler(commands=['title'])
 async def title(message):
    if message.from_user.id != ownerid:
      await bot.send_message(ownerid,f'@{username} *({message.chat.id})* Trying To Run Admin Command',parse_mode="Markdown")
    else:
      await command.title_admin(message)
-@bot.message_handler(commands=['x59xwjw'])
-def sendcoin(message):
-  try:
-     if message.reply_to_message is not None:
-        getid = int(message.reply_to_message.from_user.id)
-        getidx = str(message.reply_to_message.from_user.id)
-        getcoin = str(message.text.split()[1])
-        getcoin = command.txttonum(getcoin)
-     else:  
-        getid = int(message.text.split()[1])
-        getidx = message.text.split()[1]
-        getcoin = str(message.text.split()[2])
-        getcoin = command.txttonum(getcoin)
-     idx = str(message.from_user.id)
-     dblist = client.list_database_names()
-     if getidx in dblist and getidx != idx:
-        user = bot.get_chat(getid)
-        username = user.username
-        username = username.replace("_", "\\_")
-        txt = f'*Sending {getcoin} To* @{username}'
-        if message.chat.type == 'private':
-           sendx = bot.send_message(message.chat.id,txt,parse_mode="Markdown")
-        else:
-          sendx = bot.reply_to(message,txt,parse_mode="Markdown")
-        db = client[getidx]
-        datack = db["data"]
-        userdb = client[str(message.from_user.id)]
-        userdatack = userdb["data"]
-        userdatafind = userdatack.find_one()
-        try:
-         coin = userdatafind['coin']
-         ban = userdatafind['ban']
-        except:
-         markup = types.InlineKeyboardMarkup(row_width=1)
-         text = 'Start @MiningArenaBot'
-         url = 'https://t.me/MiningArenaBot?start=start'
-         button1 = types.InlineKeyboardButton(text=text, url=url)
-         markup.row(button1)
-         bot.edit_message_text("*You Need Start The Bot* @MiningArenaBot",message.chat.id,sendx.message_id,parse_mode="Markdown",reply_markup=markup)
-         return 0
-        if coin >= getcoin and ban == 0 and getcoin > 0:
-           query = {}
-           senduser = bot.get_chat(message.from_user.id)
-           sendusername = senduser.username
-           sendusername = sendusername.replace("_", "\\_")
-           coinadd = {'$inc':{'coin': +getcoin}}
-           coinrmv = {'$inc':{'coin': -getcoin}}
-           datack.update_one(query,coinadd)
-           userdatack.update_one(query,coinrmv)
-           txt =f"*Shared  ₪  {getcoin} With* @{username}"
-           bot.edit_message_text(txt,message.chat.id,sendx.message_id,parse_mode="Markdown")
-           txt2 = f'*Your Friend* @{sendusername} *Shared  ₪ {getcoin} With You!*'
-           if message.chat.type == 'supergroup':
-              txt2 +="\n\nSent From @MiningArenaChats"
-           bot.send_message(getid,txt2,parse_mode="Markdown")
-        elif getcoin <= 0:
-             txt =f"*You Need To Provide Real Amount Of Coins.*"
-             bot.edit_message_text(txt,message.chat.id,sendx.message_id,parse_mode="Markdown")
-        elif ban == 1:
-             txt =f"*You Can't Send Coin Since Your Account Is Banned *"
-             bot.edit_message_text(txt,message.chat.id,sendx.message_id,parse_mode="Markdown")
-        elif coin < getcoin:
-             txt =f"*You Don't Have  ₪  {getcoin}*"
-             bot.edit_message_text(txt,message.chat.id,sendx.message_id,parse_mode="Markdown")
-     elif getidx not in dblist:
-       txt = f"*User Not Found In Database*"
-       bot.reply_to(message,txt,parse_mode="Markdown")
-     elif getidx == idx:
-          txt = "*You Can't Share Yourself LOL*"
-          bot.reply_to(message,txt,parse_mode="Markdown")
-  except:
-    txt = "*Try To Fill All Value*\n/send <id> <coin>"
-    if message.chat.type == 'supergroup':
-       txt += '\n\n*Or Reply To User Message With The Following Command*: /send <coin>'
-    bot.send_message(message.chat.id,txt,parse_mode="Markdown")
+
+# Slash Command || /leaderboard
 @bot.message_handler(commands=['leaderboard'])
 async def send(message):
    maintenance_info = await maintenance_check(message)
    if maintenance_info == True:
      return 0
    await command.leaderboardmenu_group(message)
+
+# Admin Command || /profilex
 @bot.message_handler(commands=['profilex'])
 async def pro(message):
     await admin.adminprofile(message)
+
+# Admin Command || /re || Refresh /profilex
 @bot.message_handler(commands=['re'])
 async def pro(message):
     if ownerid != message.chat.id:
@@ -272,6 +256,8 @@ async def pro(message):
          await bot.reply_to(message,"*Reply To A* /profilex *Command To Refresh*",parse_mode="Markdown")
     else:
       await bot.reply_to(message,"*Reply To A* /profilex *Command To Refresh*",parse_mode="Markdown")
+
+# Slash Command || /info
 @bot.message_handler(commands=['info'])
 async def send_initial_button(message):
     uptime_seconds = int(time.time() - uptime_start)
@@ -293,6 +279,8 @@ async def send_initial_button(message):
     else:
        txt = f"*Bot Name:* Mining Arena\n\n*Status:* {config.status}\n\nUptime: *{uptime_text}*\n\n*Chats:* @MiningArenaChats\n\n*Update Channel:* @MiningArenaUpdates\n\nMade With ❤️ By @PROJECTX69"
        await bot.reply_to(message,txt,parse_mode="Markdown")
+
+# Function To Check is_maintenance:
 async def maintenance_check(message):
    async with aiofiles.open('maintenance.json', 'r') as f:
      maintenance_info = json.loads(await f.read())
@@ -307,10 +295,14 @@ async def maintenance_check(message):
      return True
    else:
      return False
+
+# Slash Command || /del || Unlock Double Tap
 @bot.message_handler(commands=['del'])
 async def del_x(message):
    global anti_spam
    del anti_spam[str(message.from_user.id)]
+
+# Slash Command || /start || Start The Bot
 @bot.message_handler(commands=['start'])
 async def send_initial_button(message):
     user_id = message.from_user.id
@@ -331,12 +323,14 @@ async def send_initial_button(message):
       button1 = types.InlineKeyboardButton(text=text, url=url)
       markup.row(button1)
       await bot.reply_to(message,"*You Can't Start The Bot In Group Chat*",parse_mode="Markdown",reply_markup=markup)
-# Advance Admin Panel 
+       # Advance Admin Panel 
+
+# Update Leaderboard
 @bot.message_handler(commands=['update'])
 async def updateleadboard(message):
-    await admin.leadboard_update(message)
-    await admin.updateleaderboard()
-    print("1")
+   await admin.request_update(message)
+
+# Slash Command || /set || Change Maintenance Infos
 @bot.message_handler(commands=['set','s'])
 async def set_text(message):
    user = message.from_user
@@ -346,6 +340,8 @@ async def set_text(message):
      await bot.send_message(ownerid,f'@{username} *({message.chat.id})* Trying To Run Admin Command',parse_mode="Markdown")
    else:
      await admin.set_text(message)
+
+# Slash Command || /notice || Check Notice About Maintenance
 @bot.message_handler(commands=['notice'])
 async def notice(message):
   async with aiofiles.open('maintenance.json', 'r') as f:
@@ -359,6 +355,8 @@ async def notice(message):
        await bot.send_message(message.chat.id,f"*[BOT IS UNDER MAINTENANCE]*\n\nDeveloper Note:\n*{reason}*",parse_mode="Markdown")
      else:
        await bot.reply_to(message,f"*[BOT IS UNDER MAINTENANCE]*\n\n*{reason}*",parse_mode="Markdown")
+
+# Slash Command || /maintenance
 @bot.message_handler(commands=['maintenance','m'])
 async def maintenance(message):
    user = message.from_user
@@ -593,7 +591,7 @@ async def handle_callback_query(call):
     print(call.from_user.username)
     chat_type = call.message.chat.type
     data = call.json
-    allowed_callback = ["delete"]
+    allowed_callback = ["delete","slash"]
     async with aiofiles.open('maintenance.json', 'r') as f:
      maintenance_info = json.loads(await f.read())
     if maintenance_info["status"] == True and call.from_user.id != ownerid:
@@ -611,7 +609,7 @@ async def handle_callback_query(call):
     async with aiofiles.open(filename, 'r') as f:
      window = json.loads(await f.read())
     if str(user_id) in window:
-      if window[str(user_id)]["message_id"] != message_id and chat_type == "private" and call.data not in allowed_callback:
+      if window[str(user_id)]["message_id"] != message_id and chat_type == "private" and call.data.split()[0] not in allowed_callback:
         message_text = "Oops! Running the same command again? Only the latest one works. Please use the newest command. Thank you!"
         await bot.answer_callback_query(call.id,text=f"Command Duplication\n\n{message_text}", show_alert=True)
         return 0
@@ -980,10 +978,7 @@ async def handle_callback_query(call):
     if call.data =="ban_list":
       await admin.banlist(call)
     if call.data =="farming_menu":
-       if call.from_user.id != ownerid:
-        await bot.answer_callback_query(call.id, text=f"Farming Is Disabled Temporary", show_alert=True)
-       else:
-        await farm.menu(call)
+      await farm.menu(call)
     if call.data == "harvest":
       confirm = await farm.harvest(call)
       if confirm:
@@ -1071,6 +1066,24 @@ async def handle_callback_query(call):
          await bot.edit_message_text(f"*{text}*",call.json["message"]['chat']['id'],call.json["message"]["message_id"],parse_mode="Markdown")
     if call.data.startswith("minelvl"):
       await command.switch_lvl(call)
+    # Slash Command Callback
+    if call.data.startswith("slash"):
+      get_command = call.data.split()[1]
+      if get_command == "buy":
+        get_command_2 = call.data.split()[2]
+        if get_command_2 == "decline":
+          await slash.buy_decline(call)
+        else:
+          await slash.buy_accept(call)
+      elif get_command == "sell":
+        get_command_2 = call.data.split()[2]
+        if get_command_2 == "decline":
+          await slash.sell_decline(call)
+        else:
+          await slash.sell_accept(call)
+      elif get_command == "inventory":
+        inventory_mode = call.data.split()[2]
+        await slash.view_inventory_call(call,inventory_mode)
     try:
       del anti_spam[str(call.from_user.id)]
     except:

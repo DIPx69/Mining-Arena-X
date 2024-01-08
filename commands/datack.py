@@ -33,6 +33,7 @@ async def datack(message):
    username = userx.username
    if username == None:
      await bot.send_message(message.chat.id,"*Kindly Set a Username From Telegram Profile*",parse_mode="Markdown")
+     return 0
    else:
      username = username.replace("_", "\\_")
      idx = str(message.chat.id)

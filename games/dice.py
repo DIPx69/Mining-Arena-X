@@ -36,7 +36,23 @@ async def send_dice(message):
      getcoin = message.text.split()[2]
      getcoin = await command.txttonum(getcoin)
    except:
-     await bot.reply_to(message,"*Provide a Bet Ammout*\nExample: /roll 2 100k",parse_mode="Markdown")
+     text = f"""
+```
+Provide a Bet Ammout
+``````Example
+/roll 2 100k
+```
+ """
+     await bot.reply_to(message,text,parse_mode="Markdown")
+     return 0
+   if not (config.min_bet <= getcoin <= config.max_bet):
+     text = f"""
+```
+Minimum Bet: {await command.numtotext(config.min_bet)}
+Maximum Bet: {await command.numtotext(config.max_bet)}
+```
+"""
+     await bot.reply_to(message,text,parse_mode="Markdown")
      return 0
    userdb = client["user"]
    userdatack = userdb[str(message.from_user.id)]
