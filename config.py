@@ -3,7 +3,7 @@ status = "Trying To Balance Economy"
 version = 1.9
 leaderboard_uptime_delay = 60
 # Game Cooldown 
-gamecooldown = 5
+gamecooldown = 15
 
 # Auto Mining Upgrade Config
 autotripprice = 3500 #auto mine upgrade price
@@ -118,5 +118,5 @@ itemmul = 0.25
 xpmul = 0.25
 
 # Game Bet Data
-min_bet = 5000000 # 5M
+min_bet = 50000 # 50k
 max_bet = 50000000 # 50M

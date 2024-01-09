@@ -64,7 +64,12 @@ async def lock(message):
      print(slash_command)
      return True
    elif str(message.from_user.id) in slash_command:
-     await bot.reply_to(message,"*Anti Spam*",parse_mode="Markdown")
+     text = f"""
+```
+Kindly Wait Until The Previous Command Has Completed
+```
+"""
+     await bot.reply_to(message,text,parse_mode="Markdown")
      return False
      
 async def command_lock(message):

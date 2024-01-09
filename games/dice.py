@@ -7,6 +7,7 @@ from telebot import types
 from telebot.async_telebot import *
 import motor.motor_asyncio
 import commands as command
+import slash_command as slash
 import dns.resolver
 server = os.getenv("server")
 token = os.getenv("token")
@@ -30,7 +31,14 @@ async def send_dice(message):
    try:
      getvalue = int(message.text.split()[1])
    except:
-     await bot.reply_to(message,"*Choose An Option 1\-6*\nExample `/roll 5 100k`",parse_mode="MarkdownV2")
+     text = f"""
+```
+Choose An Option Between 1\-6
+``````Example
+/roll 5 100k
+```
+ """
+     await bot.reply_to(message,text,parse_mode="MarkdownV2")
      return 0
    try:
      getcoin = message.text.split()[2]
@@ -75,12 +83,15 @@ Maximum Bet: {await command.numtotext(config.max_bet)}
    cooldownx = cooldownx * -1
    cooldownxx = (config.gamecooldown-cooldownx)-1
    if getcoin <= coin and getvalue in values and cooldownx >= config.gamecooldown and getcoin > 0 and ban == 0:
-      nextcooldown = int(time.time())
-      update = {'$set': {'gamecooldown': nextcooldown}}
-      await userdatack.update_one(query,update)
-      send = await bot.reply_to(message,"*🍀 Good Luck!*",parse_mode="Markdown")
+      text = f"""
+```
+🍀 Good Luck!
+```
+"""
+      send = await bot.reply_to(message,text,parse_mode="Markdown")
       msg = await bot.send_dice(message.chat.id)
       value = msg.dice.value
+      print(value)
       emoji = dice_emojis.get(value)
       if value % 2 == 0:
          result = "EVEN"
@@ -96,26 +107,48 @@ Maximum Bet: {await command.numtotext(config.max_bet)}
          updatecoin = getcoin * -1
          txtcoin = getcoin
          update = {'$inc': {'coin': updatecoin,'dice_lose': 1}}
-      await userdatack.update_one(query,update)
-      txt = f"{emoji} – *{result}*\nYou Have {status} *₪ {txtcoin} Coin*"
+      txt = f"{emoji} – {result}\nYou Have {status} ₪ {await command.numtotext(txtcoin)} Coin"
+      txt = f"""
+```
+{txt}
+```
+"""
       await asyncio.sleep(3)
       await bot.edit_message_text(txt,message.chat.id,send.message_id,parse_mode="Markdown")
+      nextcooldown = int(time.time())
+      updatex = {'$set': {'gamecooldown': nextcooldown}}
+      update.update(updatex)
+      await userdatack.update_one(query,update)
    elif ban == 1:
-        await bot.reply_to(message,"*You Can't Play Game Since Your Account Is Banned*",parse_mode="Markdown")
-   elif getcoin == 0:
-        await bot.reply_to(message,"*Bruh Don't Provide Zero Bet lol*",parse_mode="Markdown")
-   elif getcoin < 0:
-        await bot.reply_to(message,"*Bruh Don't Provide Negetive Bet lol xd*",parse_mode="Markdown")
+     text = f"""
+```
+You Can't Play Game Since Your Account Is Banned
+```
+"""
+     await bot.reply_to(message,text,parse_mode="Markdown")
    elif getcoin > coin:
-        await bot.reply_to(message,"*You Don't Have Enough Money To Bet*",parse_mode="Markdown")
+     text = f"""
+```
+You Don't Have Enough Money To Bet
+```
+"""
+     await bot.reply_to(message,text,parse_mode="Markdown")
    elif getvalue not in values:
-        await bot.reply_to(message,"*Choose Value Between 1-6*\nExample /roll 5 69k",parse_mode="Markdown")
+     text = f"""
+```
+Choose An Option Between 1\-6
+``````Example
+/roll 5 100k
+```
+ """
    elif cooldownx <= config.gamecooldown:
-        await bot.reply_to(message,f"*Try Again In {cooldownxx} Second*",parse_mode="Markdown")
+     text = f"""
+```
+Try Again In {cooldownxx} Second
+```
+"""
+     await bot.reply_to(message,text,parse_mode="Markdown")
   except Exception as e:
-    retry_after = int(e.result.headers['Retry-After'])
-    try:
-     await bot.delete_message(message.chat.id,send.message_id)
-     await bot_rate.send_message(message.chat.id,f"*Rate Limited*\nTry Again After *{retry_after}* Seconds",parse_mode="Markdown")
-    except:
-     await bot.send_message(message.from_user.id,f"*Rate Limited*\nTry Again After *{retry_after}* Seconds",parse_mode="Markdown")
+   print(str(e))
+   retry_after = int(e.result.headers['Retry-After'])
+   await slash.send_alert(message,retry_after)

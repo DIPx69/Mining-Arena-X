@@ -59,12 +59,9 @@ We Will Automatically Complete Your Item Name
      item_amount = get_commands[2]
      amount = await command.txttonum(item_amount)
    except:
-    name = await predict_word(item_name)
-    if name is False:
-      name = "xpboost"
     text = f"""Please provide the amount\n
 ```
-/buy {name} 10
+/buy minex 10
 ```
 """
     await bot.reply_to(message,text,parse_mode="Markdown")
@@ -84,11 +81,11 @@ We Will Automatically Complete Your Item Name
 - Corn Seed
 - Carrot Seed
 - Broccoli Seed
-- Watermelon corn_seed
+- Watermelon Seed
 
 We Will Automatically Complete Your Item Name
-```Example 
-/buy mi 10 >> /buy Minex 10
+```Example
+/buy watermelon_se 10 >> /buy watermelon_seed 10
 /buy xp 20 >> /buy XPboost 20
 ```
 """
@@ -123,7 +120,7 @@ We Will Automatically Complete Your Item Name
 ```
 Pending Confirmation
 
-BUY {name.upper()} {item_amount}
+BUY {name.upper().replace("_", " ")} {item_amount}
 Cost: {await command.numtotext(cost)}
 ```
 """
@@ -142,7 +139,7 @@ Please finish any open commands*
       more = cost - coin
       text = f"""
 ```
-You Need More {await command.numtotext(more)} Coin To Buy {amount} {name.upper()}
+You Need More {await command.numtotext(more)} Coin To Buy {amount} {name.upper().replace("_", " ")}
 ```
 """
       await bot.reply_to(message,text,parse_mode="Markdown") 
@@ -209,7 +206,7 @@ async def buy_confirm(call,item_name,amount):
  ```
 Action Confirmed
 
-You Have Purchased {await command.numtotext(amount)} {item_name.upper()}
+You Have Purchased {await command.numtotext(amount)} {item_name.upper().replace("_", " ")}
 Cost: {await command.numtotext(cost)}
 ```
 ```
@@ -223,6 +220,6 @@ Current {item_name.upper()}: {item_amount+amount}
  ```
 Action Confirmed
 
-You Need More {await command.numtotext(more)} Coin To Buy {await command.numtotext(amount)} {item_name.upper()}"
+You Need More {await command.numtotext(more)} Coin To Buy {await command.numtotext(amount)} {item_name.upper().replace("_", " ")}"
 ```
 """

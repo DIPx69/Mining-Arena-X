@@ -164,7 +164,7 @@ We Will Automatically Complete Your Item Name
 ```
 Pending Confirmation
 
-SELL {name.upper()} {amount}
+SELL {name.upper().replace("_", " ")} {amount}
 Total Price: {await command.numtotext(total)}
 ```
 """
@@ -184,7 +184,7 @@ Please finish any open commands*
        text = f"""
 
 ```
-You Need More {await command.numtotext(more)} {name.upper()} To Sell {amount} {name.upper()}
+You Need More {await command.numtotext(more)} {name.upper().replace("_", " ")} To Sell {amount} {name.upper().replace("_", " ")}
 ```
 """
        await bot.reply_to(message,text,parse_mode="Markdown") 
@@ -257,7 +257,7 @@ async def sell_confirm(call,item_name,amount):
  ```
 Action Confirmed
 
-You Have Sold {await command.numtotext(amount)} {item_name.upper()}
+You Have Sold {await command.numtotext(amount)} {item_name.upper().replace("_", " ")}
 Total Price: {await command.numtotext(total)}
 ```
 ```
@@ -271,6 +271,6 @@ Current {item_name.upper()}: {item_amount-amount}
  ```
 Action Confirmed
 
-You Need More {await command.numtotext(more)} {item_name.upper()} To Sell {await command.numtotext(amount)}
+You Need More {await command.numtotext(more)} {item_name.upper().replace("_", " ")} To Sell {await command.numtotext(amount)}
 ```
 """

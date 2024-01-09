@@ -56,5 +56,25 @@ async def profile(call):
     '$set': {'xp': extra}}
       await datack.update_one(query, update)
       await bot.send_message(call.from_user.id,f"*You Have Level Up To {(lvl+1)}*\nAdd *{extra}* XP As Extra XP",parse_mode="Markdown")
+   text3 = f"""
+```
+@{username} - {active_title}
+``````Balance
+- Coin: {coin}
+- ID: {idx}
+``````Prestige
+- Prestige Level: {prestigelvl}
+- Prestige Coin: {prestigecoin}
+``````MINING
+- Total Mining: {await command.numtotext(totalmine)}
+- Level: {lvl}
+- XP BAR: {xp}/{nxtlvlxp}
+``````GAME
+- 🎲    {dice_won} || {dice_lose} || {dice_total}
+- 🎯    {dart_won} || {dart_lose} || {dart_total}
+- 🏀    {basketball_won} || {basketball_lose} || {basketball_total}
+- ⚽    {football_won} || {football_lose} || {football_total}     
+```
+"""
    txt2 = f"*[ @{username} - {active_title} ]*\n\n - Coin: *{coin}*\n - ID: `{idx}`\n\n - Prestige Level: *{prestigelvl}*\n - Prestige Coin: *{prestigecoin}* 🪙 \n\n*[MINING STATS]*\n - Total Mining: *{await command.numtotext(totalmine)}*\n - Level: *{lvl}*\n - XP BAR: *{xp}/{nxtlvlxp}*\n\n*[MINI GAME STATS]*  *Win/Lose/Total*\n -   🎲   *[ {dice_won} || {dice_lose} || {dice_total} ]*\n -   🎯   *[ {dart_won} || {dart_lose} || {dart_total} ]*\n -   🏀   *[ {basketball_won} || {basketball_lose} || {basketball_total} ]*\n -   ⚽   *[ {football_won} || {football_lose} || {football_total} ]*\n"
-   await bot.edit_message_text(txt2,call.from_user.id,call.message.id,parse_mode="Markdown",reply_markup=keyboard)
+   await bot.edit_message_text(text3,call.from_user.id,call.message.id,parse_mode="Markdown",reply_markup=keyboard)

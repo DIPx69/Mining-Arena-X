@@ -179,26 +179,38 @@ async def send_txt(message):
 # Slash Command || Game || /roll
 @bot.message_handler(func=lambda message: message.chat.type != 'private',commands=['roll'])
 async def gamedice(message):
-    maintenance_info = await maintenance_check(message)
-    if maintenance_info == True:
+   maintenance_info = await maintenance_check(message)
+   if maintenance_info == True:
      return 0
-    await game.send_dice(message)
+   await slash.print_log(message)
+   status = await slash.lock(message)
+   if status:
+     await game.send_dice(message)
+     await slash.unlock(message)
 
 # Slash Command || Game || /dart
 @bot.message_handler(func=lambda message: message.chat.type != 'private',commands=['dart'])
 async def gamedart(message):
-    maintenance_info = await maintenance_check(message)
-    if maintenance_info == True:
+   maintenance_info = await maintenance_check(message)
+   if maintenance_info == True:
      return 0
-    await game.send_dart(message)
+   await slash.print_log(message)
+   status = await slash.lock(message)
+   if status:
+     await game.send_dart(message)
+     await slash.unlock(message)
 
-# Slash Command || Game || /dart
+# Slash Command || Game || /basket
 @bot.message_handler(func=lambda message: message.chat.type != 'private',commands=['basket'])
 async def gamebasketball(message):
    maintenance_info = await maintenance_check(message)
    if maintenance_info == True:
      return 0 
-   await game.send_basketball(message)
+   await slash.print_log(message)
+   status = await slash.lock(message)
+   if status:
+     await game.send_basketball(message)
+     await slash.unlock(message)
 
 # Slash Command || Game || /ball
 @bot.message_handler(func=lambda message: message.chat.type != 'private',commands=['ball'])
@@ -206,7 +218,11 @@ async def gamefootball(message):
    maintenance_info = await maintenance_check(message)
    if maintenance_info == True:
      return 0
-   await game.send_football(message)
+   await slash.print_log(message)
+   status = await slash.lock(message)
+   if status:
+     await game.send_football(message)
+     await slash.unlock(message)
 # Slash Command /add
 @bot.message_handler(commands=['add'])
 async def title_add(message):
@@ -1092,13 +1108,23 @@ async def handle_callback_query(call):
     print()
 @bot.message_handler(content_types=['new_chat_members'])
 async def new_members(message):
+   data = message.json
+   if data["new_chat_member"]["username"] is not None:
+     username = "@" + data["new_chat_member"]["username"]
+   else:
+     username = data["new_chat_member"]["id"]
    await bot.delete_message(message.chat.id,message.id)
-   text =f"🎉 Welcome To Our Group\n\nDear @{message.from_user.username}\n\nWe're thrilled to have you join us in the Mining Arena community. Feel free to introduce yourself and share your mining adventures with us. If you have any questions or need assistance, don't hesitate to ask. Let's dig deep, conquer challenges, and become legendary miners together! 💪🌟"
+   text =f"🎉 Welcome To Our Group\n\nDear {username}\n\nWe're thrilled to have you join us in the Mining Arena community. Feel free to introduce yourself and share your mining adventures with us. If you have any questions or need assistance, don't hesitate to ask. Let's dig deep, conquer challenges, and become legendary miners together! 💪🌟"
    await bot.send_message(message.chat.id,text,parse_mode="Markdown")
 @bot.message_handler(content_types=['left_chat_member'])
 async def left_member(message):
+   data = message.json
+   if data["left_chat_member"]["username"] is not None:
+     username = "@" + data["left_chat_member"]["username"]
+   else:
+     username = data["left_chat_member"]["id"]
    await bot.delete_message(message.chat.id,message.id)
-   text = f"👋 Farewell @{message.from_user.username}\n\nIt's been a pleasure having you as part of our Mining Arena community. Your contributions and presence will be missed. Remember, the mining journey continues, and you're always welcome back if you decide to return. Wishing you all the best in your future endeavors! ⛏️🌟"
+   text = f"👋 Farewell {username}\n\nIt's been a pleasure having you as part of our Mining Arena community. Your contributions and presence will be missed. Remember, the mining journey continues, and you're always welcome back if you decide to return. Wishing you all the best in your future endeavors! ⛏️🌟"
    await bot.send_message(message.chat.id,text,parse_mode="Markdown")
 @bot.message_handler(content_types=['pinned_message'])
 async def handle_pinned_message(message):

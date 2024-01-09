@@ -61,10 +61,12 @@ Maximum Bet: {await command.numtotext(config.max_bet)}
    cooldownx = cooldownx * -1
    cooldownxx = (config.gamecooldown-cooldownx)-1
    if getcoin <= coin and cooldownx >= config.gamecooldown and getcoin > 0 and ban == 0:
-      nextcooldown = int(time.time())
-      update = {'$set': {'gamecooldown': nextcooldown}}
-      await userdatack.update_one(query,update)
-      send = await bot.reply_to(message,"*🍀 Good Luck!*",parse_mode="Markdown")
+      text = f"""
+```
+🍀 Good Luck!
+```
+"""
+      send = await bot.reply_to(message,text,parse_mode="Markdown")
       msg = await bot.send_dice(message.chat.id,emoji="🎯")
       value = msg.dice.value
       nextcooldown = int(time.time())
@@ -76,41 +78,55 @@ Maximum Bet: {await command.numtotext(config.max_bet)}
       elif value == 1:
           updatecoin = getcoin*-1
           coinshow = updatecoin*-1
-          txt =f"You Missed That 🙂👏\nYou Lost  ₪ {coinshow}"
+          txt =f"You Missed That 🙂👏\nYou Lost  ₪ {await command.numtotext(coinshow)}"
           updatex = {'$inc':{"coin": updatecoin,'dart_lose':1}}
       elif value == 2 or value == 3:
           updatecoin = getcoin*-1
           coinshow = updatecoin*-1
-          txt =f"😲 Nice try\nYou Lost  ₪ {coinshow}"
+          txt =f"😲 Nice try\nYou Lost  ₪ {await command.numtotext(coinshow)}"
           updatex = {'$inc':{"coin": updatecoin,'dart_lose':1}}
       elif value == 4:
           updatecoin = getcoin*-1
           coinshow = updatecoin*-1
-          txt =f"👌 Not bad\nYou Lost  ₪ {coinshow}"
+          txt =f"👌 Not bad\nYou Lost  ₪ {await command.numtotext(coinshow)}"
           updatex = {'$inc':{"coin": updatecoin,'dart_lose':1}}
       elif value == 5:
           updatecoin = getcoin*-1
           coinshow = getcoin
-          txt =f"👌 Good shot\nYou Lost  ₪ {coinshow}"
+          txt =f"👌 Good shot\nYou Lost  ₪ {await command.numtotext(coinshow)}"
           updatex = {'$inc':{"coin": updatecoin,'dart_lose':1}}
-      await userdatack.update_one(query,updatex)
       await asyncio.sleep(2)
-      txt = f"*{txt}*"
+      txt = f"""
+```
+{txt}
+```
+"""
       await bot.edit_message_text(txt,message.chat.id,send.message_id,parse_mode="Markdown")
+      nextcooldown = int(time.time())
+      update = {'$set': {'gamecooldown': nextcooldown}}
+      updatex.update(update)
+      await userdatack.update_one(query,updatex)
    elif ban == 1:
-        await bot.reply_to(message,"*You Can't Play Game Since Your Account Is Banned*",parse_mode="Markdown")
-   elif getcoin == 0:
-        await bot.reply_to(message,"*Bruh Don't Provide Zero Bet lol*",parse_mode="Markdown")
-   elif getcoin < 0:
-        await bot.reply_to(message,"*Bruh Don't Provide Negetive Bet lol xd*",parse_mode="Markdown")
+     text = f"""
+```
+You Can't Play Game Since Your Account Is Banned
+```
+"""
+     await bot.reply_to(message,text,parse_mode="Markdown")
    elif getcoin > coin:
-        await bot.reply_to(message,"*You Don't Have Enough Money To Bet*",parse_mode="Markdown")
+     text = f"""
+```
+You Don't Have Enough Money To Bet
+```
+"""
+     await bot.reply_to(message,text,parse_mode="Markdown")
    elif cooldownx <= config.gamecooldown:
-        await bot.reply_to(message,f"*Try Again In {cooldownxx} Second*",parse_mode="Markdown")
-  except telebot.apihelper.ApiException as e:
-    retry_after = int(e.result.headers['Retry-After'])
-    try:
-     await bot.delete_message(message.chat.id,send.message_id)
-     await bot_rate.send_message(message.chat.id,f"*Rate Limited*\nTry Again After *{retry_after}* Seconds",parse_mode="Markdown")
-    except:
-     await bot.send_message(message.from_user.id,f"*Rate Limited*\nTry Again After *{retry_after}* Seconds",parse_mode="Markdown")
+     text = f"""
+```
+Try Again In {cooldownxx} Second
+```
+"""
+     await bot.reply_to(message,text,parse_mode="Markdown")
+  except Exception as e:
+   retry_after = int(e.result.headers['Retry-After'])
+   await slash.send_alert(message,retry_after)
