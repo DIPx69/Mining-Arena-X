@@ -21,7 +21,7 @@ async def banlist(call):
   back_button = types.InlineKeyboardButton(text='🔙 Back',callback_data='admin_panel')
   keyboard.add(back_button)
   await bot.edit_message_text("Generating User List",call.from_user.id,call.message.id, parse_mode="MarkdownV2",reply_markup=keyboard)
-  async with aiofiles.open('ban.json', 'r') as f:
+  async with aiofiles.open('json_data/ban.json', 'r') as f:
     userlist = json.loads(await f.read())
   start = time.time()
   all_user = "*BANNED USER LIST*\n━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"

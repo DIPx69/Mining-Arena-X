@@ -1,6 +1,6 @@
 # Config Verison 1.4
-status = "Trying To Balance Economy"
-version = 1.9
+status = "Changing TEXT UI"
+version = 2.0
 leaderboard_uptime_delay = 60
 # Game Cooldown 
 gamecooldown = 15

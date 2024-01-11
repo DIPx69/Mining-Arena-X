@@ -21,6 +21,7 @@ bot = AsyncTeleBot(token)
 from slash_command import slash_lock
 
 async def predict_word(prefix):
+   prefix = prefix.lower()
    available_item = ["iron", "coal", "silver", "crimsteel", "gold", "mythan", "magic", "potato", "corn", "carrot", "broccoli", "watermelon", "potato_seed", "corn_seed", "carrot_seed", "broccoli_seed", "watermelon_seed"]
    matches = [name for name in available_item if name.startswith(prefix)]
    if matches:

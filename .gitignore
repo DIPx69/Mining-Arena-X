@@ -4,12 +4,6 @@ clicking/__pycache__
 commands/__pycache__
 farming/__pycache__
 games/__pycache__
-json_data/active_window.json
-.breakpoints
-.prettierignore
-.replit
+json_data/
 .env
-venv/
-pyproject.toml
-poetry.lock
 active_miner.json

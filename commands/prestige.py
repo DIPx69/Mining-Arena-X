@@ -40,13 +40,33 @@ async def prestigestat(call):
     if coin >= coinrequirement and lvl >= lvlrequirement:
        confirm_button = types.InlineKeyboardButton(text='💊 Confirm Prestige', callback_data='confirmprestige')
        keyboard.add(confirm_button) 
-       warn = "━━━━━━━━━━━━━━━━━━━━━━━━━━━\n*Prestiging means losing nearly everything you've ever earned in the currency system (coins, levels,items, etc) in exchange for increasing your 'Prestige Level' and upgrading your status.*\n━━━━━━━━━━━━━━━━━━━━━━━━━━━\n*Things you won't lose:*\n- *Item Multiplier*\n- *XP Multiplier*\n- *Total Mining*\n- *Your Settings*\n- Farming Progress & Inventory\n- Mini Game Status\n\n*Basically Everything About Mining*"
+       warn = f"""Prestiging means losing nearly everything you've ever earned in the currency system (coins, levels,items,seeds etc) in exchange for increasing your 'Prestige Level' and upgrading your status\n
+```
+Things you won't lose:```
+*- Item Multiplier
+- XP Multiplier
+- Total Mining
+- Your Settings
+- Farming Progress & Inventory (Excluding Seeds)
+- Mini Game Status*
+```
+Basically Everything About Mining
+```
+"""
     else:
       warn = ""
     home_button = types.InlineKeyboardButton(text='🏡 Home', callback_data='main_menu')
     back_button = types.InlineKeyboardButton(text='🔙 Back', callback_data='profile')
     keyboard.add(home_button,back_button)
-    txt = f'*[PRESTIGE {nxt} REQUIREMENT]*\n\n - Coin:* {coin_str}/{coinrequirement_str}                   *{coinpercentage}%*\n - Level:* {lvl}/{lvlrequirement}                           *{lvlpercentage}%*\n{warn}'
+    txt = f"""
+```
+PRESTIGE {nxt} REQUIREMENT
+``````
+Coin: {coin_str}/{coinrequirement_str} [{coinpercentage}%]
+Level: {lvl}/{lvlrequirement} [{lvlpercentage}%]
+``` {warn}
+"""
+    txtx = f'*[PRESTIGE {nxt} REQUIREMENT]*\n\n - Coin:* {coin_str}/{coinrequirement_str}                   *{coinpercentage}%*\n - Level:* {lvl}/{lvlrequirement}                           *{lvlpercentage}%*\n{warn}'
     await bot.edit_message_text(txt,call.from_user.id,call.message.id,parse_mode="Markdown",reply_markup=keyboard)
 async def confirmprestige(call):
     idx = str(call.from_user.id)
@@ -65,7 +85,14 @@ async def confirmprestige(call):
        yes_button = types.InlineKeyboardButton(text='✅ Yes', callback_data='prestigeyes')
        no_button = types.InlineKeyboardButton(text='❌ No', callback_data='prestigeno')
        keyboard.add(yes_button, no_button)
-       txt = "*This is your final warning. This cannot be undone.\nAre you absolutely sure you want to prestige?*"
+       txt = f"""
+```
+This is your final warning. This cannot be undone
+``````
+Are you absolutely sure you want to prestige ?
+```
+"""
+       txtx = "*This is your final warning. This cannot be undone.\nAre you absolutely sure you want to prestige?*"
        await bot.edit_message_text(txt,call.from_user.id,call.message.id,parse_mode="Markdown",reply_markup=keyboard)
     elif automineon == 1:
        await bot.answer_callback_query(call.id, text="You Can't Prestige While Mining", show_alert=True)
@@ -99,7 +126,7 @@ async def prestigedone(call):
     item = random.randint(1,6)
     itemamount = random.randint(1,config.maxitem)
     coinreward  = random.randint(1,config.maxcoin)
-    newdata = {'$set':{"coin":0,"minex":0,"minexexp":0,"xpboost":0,"xpboostexp":0,"iron":0,"coal":0,"silver":0,"crimsteel":0,"gold":0,"mythan":0,"magic":0,"lvl":1,"xp":0,"nxtlvlxp":100,"minecooldown":0,"mineon": 0,"autominelvl": 5,"maximum_automine_lvl":5}}
+    newdata = {'$set':{"coin":0,"minex":0,"minexexp":0,"xpboost":0,"xpboostexp":0,"iron":0,"coal":0,"silver":0,"crimsteel":0,"gold":0,"mythan":0,"magic":0,"lvl":1,"xp":0,"nxtlvlxp":100,"minecooldown":0,"mineon": 0,"autominelvl": 5,"maximum_automine_lvl":5,"potato_seed":0,"broccoli_seed":0,"carrot_seed":0,"corn_seed":0,"watermelon_seed":0}}
     if item == 1:
        name = "Iron"
        adddata = {'$inc':{"prestige": +1,"prestigecoin": +1,"iron": +itemamount,'coin': +coinreward}}
@@ -121,7 +148,16 @@ async def prestigedone(call):
     if item == 7:
        name = "Magic"
        adddata = {'$inc':{"prestige": +1,"prestigecoin": +1,"magic": +itemamount,'coin': +coinreward}}
-    txt =f"Congratulations 🎉 you absolute gamer. You have put in the time, effort, and sometimes tears to reach this point. You have earned this prestige and the rewards associated, and don't let anyone tell you otherwise. We're proud of you.\n━━━━━━━━━━━━━━━━━━━━━━━━━━━\n*Earned Items*\n━━━━━━━━━\n*{itemamount}x {name}*\n*{coinreward} Coin*\n*1 Prestige Coin*"
+    txt =f"""
+Congratulations 🎉 you absolute gamer. You have put in the time, effort, and sometimes tears to reach this point. You have earned this prestige and the rewards associated, and don't let anyone tell you otherwise. We're proud of you
+```
+Earned Items
+``````
+{itemamount}x {name}
+{await command.numtotext(coinreward)} Coin
+1 Prestige Coin
+```
+"""
     await datack.update_one(query,newdata)
     await datack.update_one(query,adddata)
     await bot.edit_message_text(txt,call.from_user.id,call.message.id,parse_mode="Markdown")

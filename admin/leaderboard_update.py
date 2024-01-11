@@ -16,7 +16,7 @@ leaderboard_data = {}
 mode = False
 uptime_start = int(time.time())
 async def addToHistory(name:str,mode:str, amount:str):
-   async with aiofiles.open("history.json", 'r') as f:
+   async with aiofiles.open("admin/history.json", 'r') as f:
      data = json.loads(await f.read())
    len_history = len(data)
    data = {str(int(key)+1): message for key, message in data.items()}
@@ -30,7 +30,7 @@ async def addToHistory(name:str,mode:str, amount:str):
    sorted_history_dict = {k: v for k, v in sorted_history}
    if len(sorted_history_dict) >= 16:
      del sorted_history_dict[str(16)]
-   async with aiofiles.open("history.json", 'w') as f:
+   async with aiofiles.open("admin/history.json", 'w') as f:
      await f.write(json.dumps(sorted_history_dict))
    return sorted_history_dict
 async def numtotext(number):
@@ -70,9 +70,11 @@ async def request_update(message):
      mode = True
      await bot.send_message(message.chat.id,"Turned On")
      while True:
-       print("Leadboard Updating")
+       start = time.time()
+       print("Leadboard Updating...")
        await updateleaderboard()
-       print("Leadboard Updated")
+       end = time.time() - start
+       print(f"Leadboard Updated [ IT TOOK {end:.2f} SECOND ]")
        await asyncio.sleep(60)
    else:
      await bot.send_message(message.chat.id,"Already On")
@@ -133,7 +135,7 @@ async def updateleaderboard():
     top_text_x = random.choice(top_text)
     split_top_text = top_text_x.split("||")
     addToHistory_data = await addToHistory(split_top_text[1],split_top_text[0],split_top_text[2])
-    await bot.set_my_commands([telebot.types.BotCommand("top", f"{top_text_x}"),telebot.types.BotCommand("start", "Start"),telebot.types.BotCommand("claim","Claim Free Rewards "),telebot.types.BotCommand("leaderboard", "Leaderboard"),
+    await bot.set_my_commands([telebot.types.BotCommand("top", f"{top_text_x}"),telebot.types.BotCommand("start", "Start"),telebot.types.BotCommand("claim","Claim Free Rewards"),telebot.types.BotCommand("buy","Buy Items"),telebot.types.BotCommand("sell","Sell Items"),telebot.types.BotCommand("inventory", "Inventory"),telebot.types.BotCommand("leaderboard", "Leaderboard"),
     telebot.types.BotCommand("profile", "View Profile"),
     telebot.types.BotCommand("games", "Available Games"),
     telebot.types.BotCommand("quiz", "Play Trivia"),

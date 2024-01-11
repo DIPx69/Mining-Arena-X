@@ -42,10 +42,7 @@ async def view_inventory(message,mode:str):
     magic = datafind['magic']
     minex = datafind['minex']
     xpboost = datafind['xpboost']
-    if message.chat.type == "private":
-      header = "MINE INVENTORY"
-    else:
-      header = "       MINE INVENTORY"
+    header = "MINE INVENTORY"
     text = f"""```
 {header}
 ``````ORES
@@ -75,10 +72,7 @@ XP Boost: {await command.numtotext(xpboost)}
     broccoli_seed = datafind['broccoli_seed']
     watermelon_seed = datafind['watermelon_seed']
     water = datafind["water"]
-    if message.chat.type == "private":
-      header = "FARM INVENTORY"
-    else:
-      header = "       FARM INVENTORY"
+    header = "FARM INVENTORY"
     text = f"""```
 {header}
 ``````Tools
@@ -120,10 +114,7 @@ async def view_inventory_call(call,mode:str):
     magic = datafind['magic']
     minex = datafind['minex']
     xpboost = datafind['xpboost']
-    if call.message.chat.type == "private":
-      header = "MINE INVENTORY"
-    else:
-      header = "       MINE INVENTORY"
+    header = "MINE INVENTORY"
     text = f"""```
 {header}
 ``````ORES
@@ -153,10 +144,7 @@ XP Boost: {await command.numtotext(xpboost)}
     broccoli_seed = datafind['broccoli_seed']
     watermelon_seed = datafind['watermelon_seed']
     water = datafind["water"]
-    if call.message.chat.type == "private":
-      header = "FARM INVENTORY"
-    else:
-      header = "       FARM INVENTORY"
+    header = "FARM INVENTORY"
     text = f"""```
 {header}
 ``````Tools

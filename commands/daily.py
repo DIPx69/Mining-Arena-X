@@ -130,11 +130,19 @@ async def dailyMenu(call):
    else:
      time_left = await command.time_left(timestamp2)
      claim_button = types.InlineKeyboardButton(text=f'In {time_left}',callback_data='dailycooldown')
-     next_daily = f"\n- Next Claim: {nxttime}"
+     next_daily = f"- Next Claim: {nxttime}"
    max_water = config.max_water
+   text = f"""
+```Daily
+- Daily Streak: {streaks}
+- Rewards: {await command.numtotext(rewards)} || 💦 Water (0-{max_water})
+``````
+{next_daily}
+```
+"""
    txt = f"*[Daily Rewards]*\n\n- Daily Streak: {streaks}\n- Rewards: {await command.numtotext(rewards)} || *💦 Water (0-{max_water})* \n{next_daily}"
    keyboard.add(claim_button,back_button)
-   await bot.edit_message_text(txt,call.from_user.id,call.message.id,parse_mode="Markdown",reply_markup=keyboard)
+   await bot.edit_message_text(text,call.from_user.id,call.message.id,parse_mode="Markdown",reply_markup=keyboard)
 async def daily(message):
     timestamp = int(time.time())
     idx = str(message.chat.id)
@@ -147,7 +155,7 @@ async def daily(message):
     dt_dhaka = dt + dhaka_offset
     nxttime = dt_dhaka.strftime('%d-%m-%Y %I:%M:%S%p')
     user_id = message.chat.id
-    filename = 'ban.json'
+    filename = 'json_data/ban.json'
     async with aiofiles.open(filename, 'r') as f:
         ban_ids = json.loads(await f.read())
     if any(user_id == ban_id['id'] for   ban_id in ban_ids):

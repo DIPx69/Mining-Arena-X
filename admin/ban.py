@@ -33,7 +33,7 @@ async def ban(message):
      print(text)
      await bot.send_message(message.chat.id,f"Enter Note Also",parse_mode="Markdown")
      return 0
-   async with aiofiles.open('ban.json', 'r') as f:
+   async with aiofiles.open('json_data/ban.json', 'r') as f:
      userlist = json.loads(await f.read())
    if user_id in [item['id'] for item in userlist]:
       await bot.send_message(message.chat.id,f"*The User Is Already Banned*\nUsername @{username}",parse_mode="Markdown")
@@ -52,5 +52,5 @@ async def ban(message):
      update = {'$set':{'ban':1}}
      await collection.update_one(query,update)
      await bot.send_message(user_id,f" - Your account has been banned due to violations\n - Blocking the bot will result in the deletion of all your *Game* Data\n\n - Note From *Administration*\n\n*{admin_text_2}*",parse_mode="Markdown")
-     async with aiofiles.open('ban.json', 'w') as f:
+     async with aiofiles.open('json_data/ban.json', 'w') as f:
        await f.write(json.dumps(userlist))

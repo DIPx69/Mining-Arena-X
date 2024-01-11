@@ -44,8 +44,9 @@ async def menu(call):
    if name == "":
      name = "God"
    farming_text = f"""
-   {name}'s Farm
-
+```
+{name}'s Farm
+```
 Progress
 """
    farming_text += await farm.progress_maker(tiles)

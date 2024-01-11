@@ -21,6 +21,7 @@ bot = AsyncTeleBot(token)
 from slash_command import slash_lock
 
 async def predict_word(prefix):
+   prefix = prefix.lower()
    available_item = ["minex", "xpboost","potato_seed", "corn_seed", "carrot_seed", "broccoli_seed", "watermelon_seed"]
    matches = [name for name in available_item if name.startswith(prefix)]
    if matches:
@@ -49,7 +50,8 @@ async def buy(message):
 - Watermelon Seed
 
 We Will Automatically Complete Your Item Name
-```Example /buy min 10 >> /buy minex 10
+```Example
+/buy min 10 >> /buy minex 10
 /buy xp 20 >> /buy xpboost 20
 ```
 """

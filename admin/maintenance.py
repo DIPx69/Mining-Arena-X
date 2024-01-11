@@ -16,7 +16,7 @@ client = motor.motor_asyncio.AsyncIOMotorClient(server)
 bot = AsyncTeleBot(token)
 ownerid = 1794942023
 async def set_text(message):
-  async with aiofiles.open('maintenance.json', 'r') as f:
+  async with aiofiles.open('json_data/maintenance.json', 'r') as f:
     maintenance_info = json.loads(await f.read()) 
   try:
    reason_text = message.text.split()[1:]
@@ -26,10 +26,10 @@ async def set_text(message):
    return 0
   maintenance_info["reason"] = reason_text_2
   await bot.send_message(message.chat.id,f"Bot Maintenance Mode Reason: {reason_text_2}",parse_mode="Markdown")
-  async with aiofiles.open('maintenance.json', 'w') as f:
+  async with aiofiles.open('json_data/maintenance.json', 'w') as f:
      await f.write(json.dumps(maintenance_info))
 async def maintenance(message):
-  async with aiofiles.open('maintenance.json', 'r') as f:
+  async with aiofiles.open('json_data/maintenance.json', 'r') as f:
    maintenance_info = json.loads(await f.read())
   try:
    status_get = message.text.split()[1]
@@ -52,5 +52,5 @@ async def maintenance(message):
   else:
     maintenance_info = {"status": status_3,'reason': reason_text_2}
     await bot.send_message(message.chat.id,f"Bot Maintenance Mode Is Now {status_3}\nReason: {reason_text_2}",parse_mode="Markdown")
-    async with aiofiles.open('maintenance.json', 'w') as f:
+    async with aiofiles.open('json_data/maintenance.json', 'w') as f:
       await f.write(json.dumps(maintenance_info))

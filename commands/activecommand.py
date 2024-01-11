@@ -17,21 +17,21 @@ client = motor.motor_asyncio.AsyncIOMotorClient(server)
 bot = AsyncTeleBot(token)
 
 async def active_miner_add(call,times):
-  filename = f'active_miner.json'
+  filename = f'json_data/active_miner.json'
   async with aiofiles.open(filename, 'r') as f:
    active_miner = json.loads(await f.read())
   active_miner[str(call.from_user.id)] = {"time":times}
   async with aiofiles.open(filename, 'w') as f:
    await f.write(json.dumps(active_miner))
 async def active_miner_remove(call):
-  filename = f'active_miner.json'
+  filename = f'json_data/active_miner.json'
   async with aiofiles.open(filename, 'r') as f:
    active_miner = json.loads(await f.read())
   del active_miner[str(call.from_user.id)]
   async with aiofiles.open(filename, 'w') as f:
    await f.write(json.dumps(active_miner))
 async def active_miner_verify(call,thistime):
-  filename = f'active_miner.json'
+  filename = f'json_data/active_miner.json'
   async with aiofiles.open(filename, 'r') as f:
    active_miner = json.loads(await f.read())
   if str(call.from_user.id) in active_miner:

@@ -70,10 +70,10 @@ async def profile(call):
 - Level: {lvl}
 - XP BAR: {xp}/{nxtlvlxp}
 ``````GAME
-- 🎲    {dice_won} || {dice_lose} || {dice_total}
-- 🎯    {dart_won} || {dart_lose} || {dart_total}
-- 🏀    {basketball_won} || {basketball_lose} || {basketball_total}
-- ⚽    {football_won} || {football_lose} || {football_total}     
+- 🎲[{dice_won}||{dice_lose}||{dice_total}]
+- 🎯[{dart_won}||{dart_lose}||{dart_total}]
+- 🏀[{basketball_won}||{basketball_lose}||{basketball_total}]
+- ⚽[{football_won}||{football_lose}||{football_total}]  
 ```
 """
    txt2 = f"*[ @{username} - {active_title} ]*\n\n - Coin: *{coin}*\n - ID: `{idx}`\n\n - Prestige Level: *{prestigelvl}*\n - Prestige Coin: *{prestigecoin}* 🪙 \n\n*[MINING STATS]*\n - Total Mining: *{await command.numtotext(totalmine)}*\n - Level: *{lvl}*\n - XP BAR: *{xp}/{nxtlvlxp}*\n\n*[MINI GAME STATS]*  *Win/Lose/Total*\n -   🎲   *[ {dice_won} || {dice_lose} || {dice_total} ]*\n -   🎯   *[ {dart_won} || {dart_lose} || {dart_total} ]*\n -   🏀   *[ {basketball_won} || {basketball_lose} || {basketball_total} ]*\n -   ⚽   *[ {football_won} || {football_lose} || {football_total} ]*\n"

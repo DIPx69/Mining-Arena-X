@@ -32,7 +32,7 @@ async def unban(message):
     print(text)
     await bot.send_message(message.chat.id,f"Enter Note Also",parse_mode="Markdown")
     return 0
-  async with aiofiles.open('ban.json', 'r') as f:
+  async with aiofiles.open('json_data/ban.json', 'r') as f:
     userlist = json.loads(await f.read())
   if user_id in [item['id'] for item in userlist]:
      for i in range(len(userlist)):
@@ -55,5 +55,5 @@ async def unban(message):
   else:
    if user_id not in [item['id'] for item in userlist]:
      await bot.send_message(message.chat.id,f"*User Not Found In Ban Database*",parse_mode="Markdown")
-  async with aiofiles.open('ban.json', 'w') as f:
+  async with aiofiles.open('json_data/ban.json', 'w') as f:
     await f.write(json.dumps(userlist))

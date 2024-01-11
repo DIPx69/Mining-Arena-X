@@ -1,8 +1,6 @@
 {
-  "text": "10M Coins 💰\n5 XP Boosts 🌟\n5 MineX Boosts ⛏️\n\"I Am Back\" Title",
+  "text": "10M Coins 💰\n5 Water 💦\n9 Watermelon Seeds 🍉",
   "data": {
-    "$inc": {"water": 5,"coin":100000,"xpboost":5,"minex":5},
-    "$push": {"title_list": {"$each": ["I Am Back"]}}
-  },
-  "note": "Apologies for the downtime!\nAccept these rewards as a gesture of goodwill"
+    "$inc": {"water": 5,"coin":100000,"watermelon_seed":9}},
+  "note": "The bot has been upgraded to version 2.0. Don't forget to review the changelog, claim your rewards, and start your farming"
 }

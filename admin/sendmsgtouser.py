@@ -26,7 +26,7 @@ async def saveid(message):
   getid = message.text
   if getid.isdigit():
     getid = int(message.text)
-    filename = 'sendid.json'
+    filename = 'json_data/sendid.json'
     try:
      user = await bot.get_chat(getid)
      username = user.username
@@ -48,7 +48,7 @@ async def saveid(message):
 async def sendmsg_user(message):
   try:
    if message.chat.id == ownerid:
-     filename = 'sendid.json'
+     filename = 'json_data/sendid.json'
      async with aiofiles.open(filename, 'r') as f:
       json_data = await f.read()
       datax = json.loads(json_data)

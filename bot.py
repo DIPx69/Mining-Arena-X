@@ -50,8 +50,11 @@ anti_spam = {}
 use_anti_spam = {}
 
 # Slash Command Integration [6 Jan]
-@bot.message_handler(commands=['buy'])
+@bot.message_handler(commands=['buy','b'])
 async def buy(message):
+   maintenance_info = await maintenance_check(message)
+   if maintenance_info == True:
+     return 0
    await slash.print_log(message)
    status = await slash.lock(message)
    if status:
@@ -59,8 +62,11 @@ async def buy(message):
      await slash.unlock(message)
  
 # Slash Command Integration [6 Jan]
-@bot.message_handler(commands=['sell'])
+@bot.message_handler(commands=['sell','s'])
 async def sell(message):
+   maintenance_info = await maintenance_check(message)
+   if maintenance_info == True:
+     return 0
    await slash.print_log(message)
    status = await slash.lock(message)
    if status:
@@ -68,16 +74,22 @@ async def sell(message):
      await slash.unlock(message)
 
 # Slash Command Integration [6 Jan]
-@bot.message_handler(commands=['inventory'])
+@bot.message_handler(commands=['inventory','i'])
 async def inventory(message):
+   maintenance_info = await maintenance_check(message)
+   if maintenance_info == True:
+     return 0
    await slash.print_log(message)
    status = await slash.lock(message)
    if status:
      await slash.inventory(message)
      await slash.unlock(message)
 # Slash Command /top
-@bot.message_handler(commands=['top'])
+@bot.message_handler(commands=['top','t'])
 async def top(message):
+   maintenance_info = await maintenance_check(message)
+   if maintenance_info == True:
+     return 0
    async with aiofiles.open("admin/history.json", 'r') as f:
      history = json.loads(await f.read())
    history_text = "*[Featured Player History]*\n"
@@ -91,8 +103,11 @@ async def top(message):
    history_text = history_text.replace("_","\_")
    await bot.send_message(message.chat.id,history_text,parse_mode="Markdown")
 # Slash Command /claim
-@bot.message_handler(commands=['claim'])
+@bot.message_handler(commands=['claim','c'])
 async def claim(message):
+   maintenance_info = await maintenance_check(message)
+   if maintenance_info == True:
+     return 0
    if message.chat.type == "private":
      await command.claim_reward(message)
    else:
@@ -100,7 +115,7 @@ async def claim(message):
 
 # Slash Command /quiz
 
-@bot.message_handler(commands=['quiz'])
+@bot.message_handler(commands=['quiz','q'])
 async def quiz(message):
    maintenance_info = await maintenance_check(message)
    if maintenance_info == True:
@@ -136,7 +151,7 @@ async def banidx(message):
 # Slash Command || /id
 @bot.message_handler(commands=['id'])
 async def getid(message):
-    if message.reply_to_message is not None and message.chat.type == "supergroup":
+    if message.reply_to_message is not None and message.chat.type != "private":
        getid = message.reply_to_message.from_user.id
        await bot.reply_to(message,f"ID: `{getid}`",parse_mode="MarkdownV2")
     elif message.chat.type == "private":
@@ -298,7 +313,7 @@ async def send_initial_button(message):
 
 # Function To Check is_maintenance:
 async def maintenance_check(message):
-   async with aiofiles.open('maintenance.json', 'r') as f:
+   async with aiofiles.open('json_data/maintenance.json', 'r') as f:
      maintenance_info = json.loads(await f.read())
    user_id = message.from_user.id
    if maintenance_info["status"] == True and user_id != ownerid:
@@ -360,7 +375,7 @@ async def set_text(message):
 # Slash Command || /notice || Check Notice About Maintenance
 @bot.message_handler(commands=['notice'])
 async def notice(message):
-  async with aiofiles.open('maintenance.json', 'r') as f:
+  async with aiofiles.open('json_data/maintenance.json', 'r') as f:
     maintenance_info = json.loads(await f.read())
   if maintenance_info["status"] == False:
     await bot.send_message(message.chat.id,"*Bot Isn't In Maintenance Mode*",parse_mode="Markdown")
@@ -455,7 +470,7 @@ async def send(message):
     else:
       txt = "*Advanced Administration Panel*\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n/edit • /e <id> /valuename <value> | *Edit User Data*\n\n/remove <id> | *Remove User From Database*\n\n/profilex <id> | *Inspect User Profile*\n\n/update | *Update Leaderboard*\n\n/maintenance • /m <True/False> <reason>\n\n/set <Set Maintenance Info>\n\n/ban • /b <userid> <note|optional> | Ban User\n\n/unban • /u <userid> <note|optional> | Unban User"
       await bot.send_message(message.chat.id,txt,parse_mode="Markdown")
-@bot.message_handler(func=lambda message: message.chat.type == 'supergroup',commands=['profile'])
+@bot.message_handler(func=lambda message: message.chat.type != 'private',commands=['profile','p'])
 async def profile(message):
   maintenance_info = await maintenance_check(message)
   if maintenance_info == True:
@@ -608,7 +623,7 @@ async def handle_callback_query(call):
     chat_type = call.message.chat.type
     data = call.json
     allowed_callback = ["delete","slash"]
-    async with aiofiles.open('maintenance.json', 'r') as f:
+    async with aiofiles.open('json_data/maintenance.json', 'r') as f:
      maintenance_info = json.loads(await f.read())
     if maintenance_info["status"] == True and call.from_user.id != ownerid:
       reason = maintenance_info["reason"]
@@ -644,7 +659,7 @@ async def handle_callback_query(call):
     if call.data =="main_menu":
       await command.send_home_v2_call(call)
     if call.data == "ban_menu":
-     async with aiofiles.open("ban.json", 'r') as f:
+     async with aiofiles.open("json_data/ban.json", 'r') as f:
       ban_ids = json.loads(await f.read())
       if any(user_id == ban_id['id'] for ban_id in ban_ids):
         await bot.answer_callback_query(call.id,text=f"You Can't Use Any Action While Your Account Is Banned",show_alert=True)

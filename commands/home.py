@@ -34,7 +34,7 @@ async def send_home_v2(message):
      keyboard.add(info_button,log_button)
      keyboard.add(admin_button)
    user_id = message.chat.id
-   async with aiofiles.open("ban.json", 'r') as f:
+   async with aiofiles.open("json_data/ban.json", 'r') as f:
       ban_ids = json.loads(await f.read())
    if any(user_id == ban_id['id'] for   ban_id in ban_ids):
      txt = "*[ACCOUNT BANNED]*\n\n*Unfortunately, this account has been banned due to a violation of the game's terms of service. The ban could be a result of spamming button, cheating, exploiting glitches, or engaging in behavior that disrupts fair gameplay. The game's administrators enforce these measures to maintain a fair and enjoyable environment for all players. If you believe this ban was issued in error, you may reach out to the game's support team for further clarification and resolution.*"
@@ -74,7 +74,7 @@ async def send_home_v2_call(call):
      keyboard.add(info_button,log_button)
      keyboard.add(admin_button)
    user_id = call.from_user.id
-   async with aiofiles.open("ban.json", 'r') as f:
+   async with aiofiles.open("json_data/ban.json", 'r') as f:
       ban_ids = json.loads(await f.read())
    if any(user_id == ban_id['id'] for   ban_id in ban_ids):
      txt = "*[ACCOUNT BANNED]*\n\n*Unfortunately, this account has been banned due to a violation of the game's terms of service. The ban could be a result of spamming button, cheating, exploiting glitches, or engaging in behavior that disrupts fair gameplay. The game's administrators enforce these measures to maintain a fair and enjoyable environment for all players. If you believe this ban was issued in error, you may reach out to the game's support team for further clarification and resolution.*"

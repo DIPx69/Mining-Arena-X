@@ -25,7 +25,7 @@ async def post_preview(message):
   except:
     await bot.send_message(message.chat.id,"Enter Mode Number",parse_mode="Markdown")
     return 0
-  async with aiofiles.open("post_config.json", 'r') as f:
+  async with aiofiles.open("json_data/post_config.json", 'r') as f:
      data = json.loads(await f.read())
   keyboard = types.InlineKeyboardMarkup()
   text = data["text"]
