@@ -1,6 +1,6 @@
 {
-  "text": "10M Coins 💰\n5 Water 💦\n9 Watermelon Seeds 🍉",
+  "text": "69 Coin",
   "data": {
-    "$inc": {"water": 5,"coin":100000,"watermelon_seed":9}},
-  "note": "The bot has been upgraded to version 2.0. Don't forget to review the changelog, claim your rewards, and start your farming"
+    "$inc": {"coin":69}},
+  "note": "69 is a lucky number nothing else XD"
 }
