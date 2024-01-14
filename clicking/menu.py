@@ -1,25 +1,15 @@
-import telebot
-import os
-import config
 import random
 import commands as command
-import json
-import aiofiles
-import dns.resolver
-import config
+
 from telebot import types
-from telebot.async_telebot import *
-import motor.motor_asyncio
-from dotenv import load_dotenv
-load_dotenv()
-server = os.getenv("server")
-token = os.getenv("token")
+
+import dns.resolver
 dns.resolver.default_resolver=dns.resolver.Resolver(configure=False)
 dns.resolver.default_resolver.nameservers=['8.8.8.8']
-client = motor.motor_asyncio.AsyncIOMotorClient(server)
-bot = AsyncTeleBot(token)
-ownerid = 1794942023
 
+from commands.set_up import client
+from commands.set_up import bot
+ownerid = 1794942023
 async def main_menu(call):
    keyboard = types.InlineKeyboardMarkup()
    click_button = types.InlineKeyboardButton(text='☝🏻 Click',callback_data='clicking click')

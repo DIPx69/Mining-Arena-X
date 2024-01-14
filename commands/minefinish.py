@@ -1,24 +1,18 @@
-import telebot
-import os
 import time
-import dns.resolver
 import asyncio
 import aiofiles
 import json
 import commands as command
+
 from telebot import types
-import motor.motor_asyncio
-import dns.resolver
 from telebot.types import ForceReply, ReplyKeyboardMarkup
-from telebot.async_telebot import *
-from dotenv import load_dotenv
-load_dotenv()
-server = os.getenv("server")
-token = os.getenv("token")
+
+import dns.resolver
 dns.resolver.default_resolver=dns.resolver.Resolver(configure=False)
 dns.resolver.default_resolver.nameservers=['8.8.8.8']
-client = motor.motor_asyncio.AsyncIOMotorClient(server)
-bot = AsyncTeleBot(token)
+
+from commands.set_up import client
+from commands.set_up import bot
 ownerid = 1794942023
 async def minefinish(call):
   keyboard = types.InlineKeyboardMarkup()

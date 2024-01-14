@@ -1,25 +1,17 @@
-import telebot
-import os
 import config
 import random
-import multiprocessing
 import commands as command
 import slash_command as slash
-import json
-import aiofiles
 from telebot import types
-from telebot.async_telebot import *
-import motor.motor_asyncio
+
 import dns.resolver
-server = os.getenv("server")
-token = os.getenv("token")
 dns.resolver.default_resolver=dns.resolver.Resolver(configure=False)
 dns.resolver.default_resolver.nameservers=['8.8.8.8']
-client = motor.motor_asyncio.AsyncIOMotorClient(server)
-bot = AsyncTeleBot(token)
+
+from commands.set_up import client
+from commands.set_up import bot
 
 from slash_command import slash_lock
-
 async def predict_word(prefix):
    prefix = prefix.lower()
    available_item = ["minex", "xpboost","potato_seed", "corn_seed", "carrot_seed", "broccoli_seed", "watermelon_seed"]

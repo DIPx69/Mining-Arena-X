@@ -1,23 +1,19 @@
-import telebot
 import asyncio
-import os
 import httpx
 import html
 import random
-import threading
 import commands as command
+
 from telebot import types
-from telebot.types import Dice
-from telebot.async_telebot import *
-import motor.motor_asyncio
+
 import dns.resolver
-server = os.getenv("server")
-token = os.getenv("token")
 dns.resolver.default_resolver=dns.resolver.Resolver(configure=False)
 dns.resolver.default_resolver.nameservers=['8.8.8.8']
-client = motor.motor_asyncio.AsyncIOMotorClient(server)
-bot = AsyncTeleBot(token)
+
+from commands.set_up import client
+from commands.set_up import bot
 ownerid = 1794942023
+
 chat_timers = {}
 poll_track = {}
 async def trivia_group(message):

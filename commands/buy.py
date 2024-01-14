@@ -1,27 +1,19 @@
-import telebot
-from telebot.types import ForceReply, ReplyKeyboardMarkup
-import os
 import config
-import random
 import commands as command
 import json
 import aiofiles
 import asyncio
 import time
+
 from telebot import types
-from telebot.async_telebot import *
-from dotenv import load_dotenv
-load_dotenv()
-import motor.motor_asyncio
+from telebot.types import ForceReply, ReplyKeyboardMarkup
+
 import dns.resolver
-server = os.getenv("server")
-token = os.getenv("token")
 dns.resolver.default_resolver=dns.resolver.Resolver(configure=False)
 dns.resolver.default_resolver.nameservers=['8.8.8.8']
-client = motor.motor_asyncio.AsyncIOMotorClient(server)
-bot = AsyncTeleBot(token)
 
-
+from commands.set_up import client
+from commands.set_up import bot
 
 async def buy_minex(call, reference):
    idx = str(call.from_user.id)

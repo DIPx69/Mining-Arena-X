@@ -1,22 +1,14 @@
-import telebot
-from telebot import types
-import os
-import config
-import time
-import motor.motor_asyncio
-import aiofiles
-import json
+import asyncio
 import commands as command
+import admin
+from telebot import types
+
 import dns.resolver
-from telebot.async_telebot import *
-server = os.getenv("server")
-token = os.getenv("token")
-ratelimit = os.getenv("ratelimit")
 dns.resolver.default_resolver=dns.resolver.Resolver(configure=False)
 dns.resolver.default_resolver.nameservers=['8.8.8.8']
-client = motor.motor_asyncio.AsyncIOMotorClient(server)
-bot = AsyncTeleBot(token)
-bot_rate = AsyncTeleBot(ratelimit)
+
+from commands.set_up import client
+from commands.set_up import bot
 ownerid = 1794942023
 async def post_preview(message):
   try:

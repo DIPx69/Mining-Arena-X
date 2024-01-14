@@ -1,20 +1,21 @@
-import telebot
-from telebot import types
 import os
 import config
 import time
-import motor.motor_asyncio
+
 import commands as command
 import slash_command as slash
-import dns.resolver
+
 from telebot.async_telebot import *
-server = os.getenv("server")
-token = os.getenv("token")
-ratelimit = os.getenv("ratelimit")
+from telebot import types
+
+import dns.resolver
 dns.resolver.default_resolver=dns.resolver.Resolver(configure=False)
 dns.resolver.default_resolver.nameservers=['8.8.8.8']
-client = motor.motor_asyncio.AsyncIOMotorClient(server)
-bot = AsyncTeleBot(token)
+
+from commands.set_up import client
+from commands.set_up import bot
+
+ratelimit = os.getenv("ratelimit")
 bot_rate = AsyncTeleBot(ratelimit)
 ownerid = 1794942023
 async def send_basketball(message):

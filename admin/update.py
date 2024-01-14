@@ -1,27 +1,19 @@
-import telebot
-import os
-import config
 import time
 import commands as command
 import platform
 import aiohttp
+
 import dns.resolver
-from telebot.async_telebot import *
-import motor.motor_asyncio
-server = os.getenv("server")
-token = os.getenv("token")
 dns.resolver.default_resolver=dns.resolver.Resolver(configure=False)
 dns.resolver.default_resolver.nameservers=['8.8.8.8']
-client = motor.motor_asyncio.AsyncIOMotorClient(server)
-bot = AsyncTeleBot(token)
+
+from commands.set_up import client
+from commands.set_up import bot
 ownerid = 1794942023
-delay = config.leaderboard_uptime_delay
-sign = "🔴"
-total_update = 0
+
 uptime_start = int(time.time())
 leaderboard_data = {}
 async def info(call):
-   global total_update
    uptime_seconds = int(time.time() - uptime_start)
    days = uptime_seconds // (24 * 3600)
    hours = (uptime_seconds % (24 * 3600)) // 3600

@@ -1,14 +1,7 @@
-import os
-import random
 import commands as command
 import slash_command as slash
-import json
-import aiofiles
 import asyncio
-from telebot.async_telebot import *
-token = os.getenv("token")
-bot = AsyncTeleBot(token)
-
+from commands.set_up import bot
 slash_command = {}
 pending = {} 
 

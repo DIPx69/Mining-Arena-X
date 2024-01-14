@@ -1,30 +1,21 @@
-import telebot
 import asyncio
-import os
-import json
 import time 
-import aiofiles
-import config 
 import random
+
 import commands as command
 import farming as farm
 import admin
+
 from telebot import types
-from telebot.types import Dice
-from telebot.async_telebot import *
-import motor.motor_asyncio
-import dns.resolver
-from dotenv import load_dotenv
 from telebot import formatting
-load_dotenv()
-server = os.getenv("server")
-token = os.getenv("token")
+
+import dns.resolver
 dns.resolver.default_resolver=dns.resolver.Resolver(configure=False)
 dns.resolver.default_resolver.nameservers=['8.8.8.8']
-client = motor.motor_asyncio.AsyncIOMotorClient(server)
-bot = AsyncTeleBot(token)
-ownerid = 1794942023
 
+from commands.set_up import client
+from commands.set_up import bot
+ownerid = 1794942023
 async def harvest(call):
    keyboard = types.InlineKeyboardMarkup()
    idx = str(call.from_user.id)
@@ -98,3 +89,12 @@ async def harvest(call):
      keyboard.add(delete_button) 
      await bot.send_message(call.from_user.id,text,parse_mode="Markdown",reply_markup=keyboard)
      return True
+async def harvest_able(tiles,datafind):
+   any_harvest = 0
+   for tile in tiles:
+     now_time = int(time.time())
+     tile_name = datafind[f"tile_name_{tile}"]
+     tile_time = datafind[f"tile_{tile}"]
+     if now_time >= tile_time and tile_time != 0:
+       any_harvest += 1
+   return any_harvest

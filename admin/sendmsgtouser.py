@@ -1,23 +1,20 @@
-import telebot
-import os
 import time
-import dns.resolver
 import asyncio
-import aiofiles
-import json
 import commands as command
 import admin
-import motor.motor_asyncio
-import dns.resolver
+import aiofiles
+import json
+
+from telebot import types
 from telebot.types import ForceReply, ReplyKeyboardMarkup
 from telebot import formatting as formatx
-from telebot.async_telebot import *
-server = os.getenv("server")
-token = os.getenv("token")
+
+import dns.resolver
 dns.resolver.default_resolver=dns.resolver.Resolver(configure=False)
 dns.resolver.default_resolver.nameservers=['8.8.8.8']
-client = motor.motor_asyncio.AsyncIOMotorClient(server)
-bot = AsyncTeleBot(token)
+
+from commands.set_up import client
+from commands.set_up import bot
 ownerid = 1794942023
 async def sendmsgtouser(call):
    keyboard = types.ForceReply(selective=False,input_field_placeholder="Enter Account ID")

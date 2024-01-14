@@ -1,22 +1,18 @@
-import telebot
 import asyncio
-import os
 import config
-import dns.resolver
 import commands as command
 import time
+
 from datetime import datetime, timedelta
 from telebot import types
-from telebot.async_telebot import *
-import motor.motor_asyncio
-from dotenv import load_dotenv
-load_dotenv()
-server = os.getenv("server")
-token = os.getenv("token")
+
+import dns.resolver
 dns.resolver.default_resolver=dns.resolver.Resolver(configure=False)
 dns.resolver.default_resolver.nameservers=['8.8.8.8']
-client = motor.motor_asyncio.AsyncIOMotorClient(server)
-bot = AsyncTeleBot(token)
+
+from commands.set_up import client
+from commands.set_up import bot
+
 async def time_ago(timestamp: int):
    if timestamp < int(time.time()):
      time_ago = int(time.time() - timestamp)

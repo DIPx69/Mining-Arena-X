@@ -1,17 +1,12 @@
-import os
-import random
 import commands as command
 import slash_command as slash
-import json
-import aiofiles
+
 import asyncio
 from telebot import types
-from telebot.async_telebot import *
-token = os.getenv("token")
-ratelimit = os.getenv("ratelimit")
-bot_rate_limit = AsyncTeleBot(ratelimit)
-bot = AsyncTeleBot(token)
 
+from commands.set_up import client
+from commands.set_up import bot
+from games.basketball import bot_rate
 async def send_alert(message,retry_after):
    try:
     text = f"""

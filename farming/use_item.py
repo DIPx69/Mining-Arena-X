@@ -1,27 +1,20 @@
-import telebot
 import asyncio
-import os
-import json
 import time 
-import aiofiles
-import config 
 import random
+
 import commands as command
+import farming as farm
 import admin
+
 from telebot import types
-from telebot.types import Dice
-from telebot.async_telebot import *
-import motor.motor_asyncio
-import dns.resolver
-from dotenv import load_dotenv
 from telebot import formatting
-load_dotenv()
-server = os.getenv("server")
-token = os.getenv("token")
+
+import dns.resolver
 dns.resolver.default_resolver=dns.resolver.Resolver(configure=False)
 dns.resolver.default_resolver.nameservers=['8.8.8.8']
-client = motor.motor_asyncio.AsyncIOMotorClient(server)
-bot = AsyncTeleBot(token)
+
+from commands.set_up import client
+from commands.set_up import bot
 ownerid = 1794942023
 async def time_left(timestamp: int):
    if timestamp > int(time.time()):

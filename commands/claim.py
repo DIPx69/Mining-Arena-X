@@ -1,25 +1,20 @@
-import telebot
 import json
 import os
 import time
-from datetime import datetime, timedelta
 import asyncio
-import config
 import aiofiles
 import commands as command
+
 from telebot import types
+from datetime import datetime, timedelta
+
 import dns.resolver
-import motor.motor_asyncio
-from telebot.async_telebot import *
-from telebot import types
-from dotenv import load_dotenv
-load_dotenv()
-server = os.getenv("server")
-token = os.getenv("token")
 dns.resolver.default_resolver=dns.resolver.Resolver(configure=False)
 dns.resolver.default_resolver.nameservers=['8.8.8.8']
-client = motor.motor_asyncio.AsyncIOMotorClient(server)
-bot = AsyncTeleBot(token)
+
+from commands.set_up import client
+from commands.set_up import bot
+
 async def add_to_claim_list(call):
   filename = f'json_data/claimed_user.json'
   async with aiofiles.open(filename, 'r') as f:

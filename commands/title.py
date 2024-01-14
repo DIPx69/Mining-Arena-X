@@ -1,18 +1,11 @@
-import telebot
-import os
-import pymongo
 import commands as command
+
 import dns.resolver
-from telebot.async_telebot import *
-import motor.motor_asyncio
-from dotenv import load_dotenv
-load_dotenv()
-server = os.getenv("server")
-token = os.getenv("token")
 dns.resolver.default_resolver=dns.resolver.Resolver(configure=False)
 dns.resolver.default_resolver.nameservers=['8.8.8.8']
-client = motor.motor_asyncio.AsyncIOMotorClient(server)
-bot = AsyncTeleBot(token)
+
+from commands.set_up import client
+from commands.set_up import bot
 async def title_admin(message):
   try:
    cmd = message.text.split()[1]

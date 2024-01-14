@@ -34,17 +34,15 @@ from telebot import apihelper
 from telebot.types import Dice
 from telebot.async_telebot import *
 
-# Importing DNS And Database Module
-import motor.motor_asyncio
+# Importing DNS Resolver
 import dns.resolver
-server = os.getenv("server")
-token = os.getenv("token")
 dns.resolver.default_resolver=dns.resolver.Resolver(configure=False)
 dns.resolver.default_resolver.nameservers=['8.8.8.8']
-client = motor.motor_asyncio.AsyncIOMotorClient(server)
-print(client)
-bot = AsyncTeleBot(token)
+
+from commands.set_up import client
+from commands.set_up import bot
 ownerid = 1794942023
+
 uptime_start = time.time()
 anti_spam = {}
 use_anti_spam = {}
@@ -781,6 +779,13 @@ async def handle_callback_query(call):
          await click.main_menu(call)
        elif command_name == "click":
          await click.clicking(call)
+       elif command_name == "shop":
+         await click.shop(call)
+       elif command_name == "upgrade":
+         upgrade_name = call.data.split()[2]
+         status = await click.upgrade(call,upgrade_name)
+         if status:
+           await click.shop(call)
     if call.data == "back_lb":
       await command.leaderboardmenu(call)
     if call.data == "total_mine_lb":

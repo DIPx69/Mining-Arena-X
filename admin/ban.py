@@ -1,22 +1,17 @@
-import telebot
 import asyncio
-import os
 import aiofiles
 import json
-import motor.motor_asyncio
 import commands as command
-import dns.resolver
+import admin
 from telebot import types
-from telebot.async_telebot import *
-server = os.getenv("server")
-token = os.getenv("token")
-dns.resolver.default_resolver = dns.resolver.Resolver(configure=False)
-dns.resolver.default_resolver.nameservers = ['8.8.8.8']
-client = motor.motor_asyncio.AsyncIOMotorClient(server)
-bot = AsyncTeleBot(token)
+
+import dns.resolver
+dns.resolver.default_resolver=dns.resolver.Resolver(configure=False)
+dns.resolver.default_resolver.nameservers=['8.8.8.8']
+
+from commands.set_up import client
+from commands.set_up import bot
 ownerid = 1794942023
-
-
 async def ban(message):
   try:
     user_id = message.text.split()[1]

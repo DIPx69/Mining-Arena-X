@@ -3,6 +3,7 @@ import os
 os.system('clear')
 print("BOT VERSION [ 2.1 ]")
 print("Initializing User Commands...")
+from .set_up import *
 from .profile import profile
 from .inventory import *
 from .claim import *
@@ -15,7 +16,6 @@ from .farm_shop_buy import *
 from .home import *
 from .prestige import *
 from .mining import *
-from .help import *
 from .settings import *
 from .leadboard import *
 from .texttonum import *

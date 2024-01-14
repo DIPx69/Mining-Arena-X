@@ -1,17 +1,13 @@
-import telebot
-import os
 import json 
 import time
 import aiofiles
+
 import dns.resolver
-from telebot.async_telebot import *
-import motor.motor_asyncio
-server = os.getenv("server")
-token = os.getenv("token")
 dns.resolver.default_resolver=dns.resolver.Resolver(configure=False)
 dns.resolver.default_resolver.nameservers=['8.8.8.8']
-client = motor.motor_asyncio.AsyncIOMotorClient(server)
-bot = AsyncTeleBot(token)
+
+from commands.set_up import client
+from commands.set_up import bot
 leaderboard_data = {}
 mode = False
 uptime_start = int(time.time())
