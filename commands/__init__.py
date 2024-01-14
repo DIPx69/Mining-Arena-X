@@ -1,7 +1,7 @@
 import os
 
 os.system('clear')
-print("BOT VERSION [ 2. 0 ]")
+print("BOT VERSION [ 2.1 ]")
 print("Initializing User Commands...")
 from .profile import profile
 from .inventory import *

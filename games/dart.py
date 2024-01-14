@@ -116,7 +116,7 @@ You Can't Play Game Since Your Account Is Banned
    elif getcoin > coin:
      text = f"""
 ```
-You Don't Have Enough Money To Bet
+You Don't Have Enough Coin To Bet
 ```
 """
      await bot.reply_to(message,text,parse_mode="Markdown")

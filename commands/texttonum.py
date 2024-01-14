@@ -1,4 +1,5 @@
 async def numtotext(number):
+    number = int(number)
     abbreviations = [
         (1e12, 'T'),
         (1e9, 'B'),

@@ -132,7 +132,7 @@ async def unbanidx(message):
    user = message.from_user
    username = user.username
    username = username.replace("_", "\\_")
-   if message.chat.id != ownerid:
+   if message.from_user.id != ownerid:
      await bot.send_message(ownerid,f'@{username} *({message.from_user.id})* Trying To Run Admin Command',parse_mode="Markdown")
    else:
      await admin.unban(message)
@@ -143,7 +143,7 @@ async def banidx(message):
    user = message.from_user
    username = user.username
    username = username.replace("_", "\\_")
-   if message.chat.id != ownerid:
+   if message.from_user.id != ownerid:
      await bot.send_message(ownerid,f'@{username} *({message.from_user.id})* Trying To Run Admin Command',parse_mode="Markdown")
    else:
      await admin.ban(message)
@@ -367,7 +367,7 @@ async def set_text(message):
    user = message.from_user
    username = user.username
    username = username.replace("_", "\\_")
-   if message.chat.id != ownerid:
+   if message.from_user.id != ownerid:
      await bot.send_message(ownerid,f'@{username} *({message.chat.id})* Trying To Run Admin Command',parse_mode="Markdown")
    else:
      await admin.set_text(message)
@@ -393,7 +393,7 @@ async def maintenance(message):
    user = message.from_user
    username = user.username
    username = username.replace("_", "\\_")
-   if message.chat.id != ownerid:
+   if message.from_user.id != ownerid:
      await bot.send_message(ownerid,f'@{username} *({message.chat.id})* Trying To Run Admin Command',parse_mode="Markdown")
    else:
      await admin.maintenance(message)
@@ -465,7 +465,7 @@ async def send(message):
     user = message.from_user
     username = user.username
     username = username.replace("_", "\\_")
-    if message.chat.id != ownerid:
+    if message.from_user.id != ownerid:
        await bot.send_message(ownerid,f'@{username} *({message.chat.id})* Trying To Run Admin Command',parse_mode="Markdown")
     else:
       txt = "*Advanced Administration Panel*\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n/edit • /e <id> /valuename <value> | *Edit User Data*\n\n/remove <id> | *Remove User From Database*\n\n/profilex <id> | *Inspect User Profile*\n\n/update | *Update Leaderboard*\n\n/maintenance • /m <True/False> <reason>\n\n/set <Set Maintenance Info>\n\n/ban • /b <userid> <note|optional> | Ban User\n\n/unban • /u <userid> <note|optional> | Unban User"
@@ -475,53 +475,7 @@ async def profile(message):
   maintenance_info = await maintenance_check(message)
   if maintenance_info == True:
      return 0
-  try:
-    if message.reply_to_message is not None:
-       getid = int(message.reply_to_message.from_user.id)
-       getidx = str(message.reply_to_message.from_user.id)
-    else:
-      try:
-       getid = int(message.text.split()[1])
-       getidx = str(message.text.split()[1])
-      except:
-       getid = int(message.from_user.id)
-       getidx = str(message.from_user.id)
-    user = await bot.get_chat(getid)
-    username = user.username
-    db = client["user"]
-    datack = db[getidx]
-    datafind = await datack.find_one()
-    ban = datafind["ban"]
-    coin = await command.numtotext(datafind["coin"])
-    lvl = datafind["lvl"]
-    totalmine = datafind['mymine']
-    xp = datafind['xp']
-    prestigelvl = datafind['prestige']
-    prestigecoin = datafind['prestigecoin']
-    nxtlvlxp = datafind['nxtlvlxp']
-    dice_won = datafind["dice_won"]
-    dice_lose = datafind["dice_lose"]
-    dice_total = dice_won+dice_lose
-    dart_won = datafind["dart_won"]
-    dart_lose = datafind["dart_lose"]
-    dart_total = dart_won+dart_lose
-    basketball_won = datafind["basketball_won"]
-    basketball_lose = datafind["basketball_lose"]
-    basketball_total = basketball_won+basketball_lose
-    football_won = datafind["football_won"]
-    football_lose = datafind["football_lose"]
-    football_total = football_won+football_lose
-    active_title = datafind["active_title"]
-    if ban == 0:
-       txt = f"*[ @{username} - {active_title} ]*\n\n - Coin: *{coin}*\n - ID: `{getid}`\n\n - Prestige Level: *{prestigelvl}*\n - Prestige Coin: *{prestigecoin}* 🪙 \n\n*[MINING STATS]*\n - Total Mining: *{totalmine}*\n - Level: *{lvl}*\n - XP BAR: *{xp}/{nxtlvlxp}*\n\n*[MINI GAME STATS]*  *Win/Lose/Total*\n -   🎲   *[ {dice_won} || {dice_lose} || {dice_total} ]*\n -   🎯   *[ {dart_won} || {dart_lose} || {dart_total} ]*\n -   🏀   *[ {basketball_won} || {basketball_lose} || {basketball_total} ]*\n -   ⚽   *[ {football_won} || {football_lose} || {football_total} ]*"
-    elif str(message.from_user.id) == getidx:
-      txt =f"*You Can't View Your Profile Since Your Account Is Banned*"
-    else:
-      txt =f"*You Can't View @{username}'s Profile Since His/Her Account Is Banned*"
-    await bot.reply_to(message,txt,parse_mode="Markdown")
-  except Exception as e:
-   print(str(e))
-   await bot.reply_to(message,"*User Not Found In Database*",parse_mode="Markdown")
+  await slash.profile(message)
 @bot.message_handler(commands=['edit','e'])
 async def edit(message):
     if message.reply_to_message is None:
@@ -537,7 +491,7 @@ async def valuename(message):
     user = message.from_user
     username = user.username
     username = username.replace("_", "\\_")
-    if message.chat.id != ownerid:
+    if message.from_user.id != ownerid:
        await bot.send_message(ownerid,f'@{username} *({message.chat.id})* Trying To Run Admin Command',parse_mode="Markdown")
     else:
       txt = '*Currently Available Value*\n━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`coin` Coin Value For User\n\n`prestige` Prestige Value\n\n`prestigecoin` Prestige Coin Value\n\n`minex` MineX Value\n\n`xpboost` XPBOOST Value\n\n`minexexp` MineX Expire Timestamp\n\n`xpboostexp` XPBOOST Expire Timestamp\n\n`iron` Iron Value\n\n`coal` Coal Value\n\n`silver` Silver Value\n\n`crimsteel` Crimsteel Value\n\n`gold` Gold Value\n\n`mythan` Mythan Value\n\n`magic` Magic Value\n\n`mymine` Total Mine Value \n\n`lvl` Level Value\n\n`xp` XP Value\n\n`nxtlvlxp` Next Level XP Value\n\n`dailycooldown` Daily Cooldown Timestamp\n\n`warn` Total Warning Value\n\n`automineon` AutoMine On Off Value\n\n`autominelvl` Autom Mining Level Value\n\n`xpmulti` XP Multiplier Value\n\n`itemmulti` Item Multiplier Value'
@@ -548,7 +502,7 @@ async def remove(message):
     user = message.from_user
     username = user.username
     username = username.replace("_", "\\_")
-    if message.chat.id != ownerid:
+    if message.from_user.id != ownerid:
        await bot.send_message(ownerid,f'@{username} *({message.chat.id})* Trying To Run Admin Command',parse_mode="Markdown")
     else:
       send = await bot.send_message(message.chat.id,"*Trying To Remove The User*",parse_mode="Markdown")
@@ -1083,18 +1037,29 @@ async def handle_callback_query(call):
        get_id = int(call.data.split()[1])
        get_id_call = int(call.from_user.id)
        if get_id != get_id_call:
-         await bot.answer_callback_query(call.id, text=f"You Can't Interact With Others Button", show_alert=True)
+         await bot.answer_callback_query(call.id, text=f"This menu is controlled by others\nYou will have to run the original command yourself", show_alert=True)
        else:
          await game.send_table(call,get_id)
     if call.data.startswith("decline"):
        get_id = int(call.data.split()[1])
        get_id_call = int(call.from_user.id)
-       if get_id != get_id_call:
-         await bot.answer_callback_query(call.id, text=f"You Can't Interact With Others Button", show_alert=True)
+       allowed_id = [get_id,call.message.reply_to_message.from_user.id]
+       if get_id_call not in allowed_id:
+         await bot.answer_callback_query(call.id, text=f"This menu is controlled by others\nYou will have to run the original command yourself", show_alert=True)
        else:
          text = call.message.text
-         text = re.sub("Pending Confirmation","Action Declined", text)
-         await bot.edit_message_text(f"*{text}*",call.json["message"]['chat']['id'],call.json["message"]["message_id"],parse_mode="Markdown")
+         text = re.sub("Pending Confirmation","",text)
+         strip_text = text.strip()
+         divided_text = strip_text.split('\n')
+         text = f"""
+```
+Action Declined By @{call.from_user.username}
+``` {divided_text[0]}
+```
+{divided_text[1]}
+```
+"""
+         await bot.edit_message_text(text,call.json["message"]['chat']['id'],call.json["message"]["message_id"],parse_mode="Markdown")
     if call.data.startswith("minelvl"):
       await command.switch_lvl(call)
     # Slash Command Callback

@@ -126,7 +126,7 @@ async def prestigedone(call):
     item = random.randint(1,6)
     itemamount = random.randint(1,config.maxitem)
     coinreward  = random.randint(1,config.maxcoin)
-    newdata = {'$set':{"coin":0,"minex":0,"minexexp":0,"xpboost":0,"xpboostexp":0,"iron":0,"coal":0,"silver":0,"crimsteel":0,"gold":0,"mythan":0,"magic":0,"lvl":1,"xp":0,"nxtlvlxp":100,"minecooldown":0,"mineon": 0,"autominelvl": 5,"maximum_automine_lvl":5,"potato_seed":0,"broccoli_seed":0,"carrot_seed":0,"corn_seed":0,"watermelon_seed":0}}
+    newdata = {'$set':{"coin":0,"minex":0,"minexexp":0,"xpboost":0,"xpboostexp":0,"iron":0,"coal":0,"silver":0,"crimsteel":0,"gold":0,"mythan":0,"magic":0,"lvl":1,"xp":0,"nxtlvlxp":100,"minecooldown":0,"mineon": 0,"autominelvl": 5,"maximum_automine_lvl":5,"potato_seed":0,"broccoli_seed":0,"carrot_seed":0,"corn_seed":0,"watermelon_seed":0,"xpboost_on":0,"minex_on":0}}
     if item == 1:
        name = "Iron"
        adddata = {'$inc':{"prestige": +1,"prestigecoin": +1,"iron": +itemamount,'coin': +coinreward}}

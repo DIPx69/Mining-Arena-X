@@ -1,9 +1,9 @@
 # Config Verison 1.4
 status = "Changing TEXT UI"
-version = 2.0
+version = 2.1
 leaderboard_uptime_delay = 60
 # Game Cooldown 
-gamecooldown = 15
+gamecooldown = 3
 
 # Auto Mining Upgrade Config
 autotripprice = 3500 #auto mine upgrade price
@@ -118,5 +118,5 @@ itemmul = 0.25
 xpmul = 0.25
 
 # Game Bet Data
-min_bet = 50000 # 50k
-max_bet = 50000000 # 50M
+min_bet = 10000 # 10k
+max_bet = 20000000 # 20M
