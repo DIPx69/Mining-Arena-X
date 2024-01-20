@@ -1,4 +1,5 @@
 import commands as command
+from telebot import types
 
 import dns.resolver
 dns.resolver.default_resolver=dns.resolver.Resolver(configure=False)

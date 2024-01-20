@@ -1,4 +1,5 @@
 import commands as command
+from telebot import  types
 
 import dns.resolver
 dns.resolver.default_resolver=dns.resolver.Resolver(configure=False)
@@ -119,7 +120,6 @@ async def switch_title(call):
    keyboard.add(back_button)
    await bot.edit_message_text(main_text,call.from_user.id,call.message.id,parse_mode="Markdown",reply_markup=keyboard)
 async def switch_title_page(call,page_number):
-   print("Line 1")
    get_page_number = int(page_number)
    keyboard = types.InlineKeyboardMarkup()
    idx = str(call.from_user.id)

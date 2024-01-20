@@ -1,7 +1,9 @@
 import config
 import time
 import commands as command
+import asyncio
 
+import slash_command as slash
 from telebot import types
 
 import dns.resolver
@@ -53,9 +55,7 @@ Maximum Bet: {await command.numtotext(config.max_bet)}
      await bot.reply_to(message,"*You Need Start The Bot*",parse_mode="Markdown",reply_markup=markup)
      return 0
    query = {}
-   cooldownx = (cooldown - nowtime)
-   cooldownx = cooldownx * -1
-   cooldownxx = (config.gamecooldown-cooldownx)-1
+   cooldownx = nowtime - cooldown
    if getcoin <= coin and cooldownx >= config.gamecooldown and getcoin > 0 and ban == 0:
       text = f"""
 ```
@@ -117,9 +117,10 @@ You Don't Have Enough Coin To Bet
 """
      await bot.reply_to(message,text,parse_mode="Markdown")
    elif cooldownx <= config.gamecooldown:
+     cooldown_time = (config.gamecooldown-cooldownx)
      text = f"""
 ```
-Try Again In {cooldownxx} Second
+Try Again In {cooldown_time} Second
 ```
 """
      await bot.reply_to(message,text,parse_mode="Markdown")

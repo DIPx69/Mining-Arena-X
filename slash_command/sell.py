@@ -3,7 +3,7 @@ import random
 import commands as command
 import slash_command as slash
 from telebot import types
-
+import asyncio
 import dns.resolver
 dns.resolver.default_resolver=dns.resolver.Resolver(configure=False)
 dns.resolver.default_resolver.nameservers=['8.8.8.8']

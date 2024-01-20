@@ -1,23 +1,23 @@
-# Config Verison 1.4
+# Config Verison 1.5
 status = "Changing TEXT UI"
-version = 2.1
+version = 2.2
 leaderboard_uptime_delay = 60
 # Game Cooldown 
-gamecooldown = 3
+gamecooldown = 5
 
 # Auto Mining Upgrade Config
-autotripprice = 3500 #auto mine upgrade price
-mineleft = 6 #maxmine left value 
+autotripprice = 5000 #auto mine upgrade price
+mineleft = 5 #maxmine left value 
 dailycoin = 750000 # daily coin value each
 dailycooldown = 86400 # daily cooldown
 
 # Level Up Config
-nxtlvlxpby = 50 # xp increase if levelup
+nxtlvlxpby = 75 # xp increase if levelup
 max_pickaxe_level = 150 # max pickaxe level 
-extra_level_for_prestige = 50 # extra level for prestige
+extra_level_for_prestige = 25 # extra level for prestige
 
 # Daily Config
-max_water = 6
+max_water = 2
 
 # Item Price And Cooldown Config
 
@@ -108,8 +108,8 @@ goldprice = 450
 mythanprice = 600 
 magicprice = 800
 # Prestige Config
-eachprestigecoin = 15000000
-eachprestigelvl = 30
+eachprestigecoin = 25000000
+eachprestigelvl = 50
 # Prestige Reward
 maxitem = 5000
 maxcoin = 2500000

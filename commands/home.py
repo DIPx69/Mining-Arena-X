@@ -17,8 +17,7 @@ from commands.set_up import client
 from commands.set_up import bot
 ownerid = 1794942023
 async def send_home_v2(message):
-   user = message.from_user.id
-   user = str(user)
+   user = str(message.chat.id)
    keyboard = types.InlineKeyboardMarkup()
    db = client["user"]
    datack = db[user]

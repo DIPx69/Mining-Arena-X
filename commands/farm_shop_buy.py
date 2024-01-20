@@ -2,6 +2,7 @@ import config
 import aiofiles
 import json
 import commands as command
+import asyncio
 
 from telebot import types
 

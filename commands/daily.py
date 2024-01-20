@@ -6,6 +6,7 @@ import config
 import aiofiles
 import commands as command
 from telebot import types
+import random 
 
 import dns.resolver
 dns.resolver.default_resolver=dns.resolver.Resolver(configure=False)

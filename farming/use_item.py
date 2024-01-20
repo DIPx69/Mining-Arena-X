@@ -1,6 +1,7 @@
 import asyncio
 import time 
 import random
+import config
 
 import commands as command
 import farming as farm
@@ -146,11 +147,11 @@ async def use_item(call,item,tile, notification=True):
        else:
          query = {}
          chance = random.random()
-         if chance <= 0.1:
+         if chance <= 0.35:
            keyboard = types.InlineKeyboardMarkup()
            delete_button = types.InlineKeyboardButton(text='Delete',callback_data=f'delete')
            keyboard.add(delete_button)
-           text = "- You have lost 1 💧 *Water*\n- Tip: There is a 10% chance of losing water"
+           text = "- You have lost 1 💧 *Water*\n- Tip: There is a 35% chance of losing water"
            await bot.send_message(call.from_user.id,text,parse_mode="Markdown",reply_markup=keyboard)
            data = -1
          else:

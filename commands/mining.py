@@ -2,6 +2,7 @@ import asyncio
 import config
 import commands as command
 import time
+import random
 
 from datetime import datetime, timedelta
 from telebot import types
@@ -81,35 +82,57 @@ async def view_mine(call,name: str):
      if minexactive == 0:
        minex_active = types.InlineKeyboardButton(text=f'MineX[{minex}]', callback_data=f'switch minex {name}')
        minex_status =f"Disabled"
+       item_cooldown_text = ""
        cooldown = item_cooldown
        now_time = int(time.time())
        end_time_2 = int(end_time + now_time)
      else:
        minex_active = types.InlineKeyboardButton(text=f'・MineX・[{minex}]', callback_data=f'switch minex {name}')
        minex_status =f"Enabled"
-       cooldown = item_cooldown/2
+       item_cooldown_text = "[25% Decreased]"
+       cooldown = item_cooldown * 0.75
        now_time = int(time.time())
-       end_time = int(end_time/2)
+       end_time = int(total_mine*cooldown)
        end_time_2 = int(end_time + now_time)
      start_button = types.InlineKeyboardButton(text=f'⛏️ START', callback_data=f'start_mine {name}')
      dt = datetime.fromtimestamp(end_time_2)
      dhaka_offset = timedelta(hours=6)  
      dt_dhaka = dt + dhaka_offset
      end_time_str = dt_dhaka.strftime('%I:%M:%S%p')
+     item_xp = getattr(config, f"max{name}xp") 
      if xpboostactive == 0:
+       item_xp_text = ""
        xpboostactive = types.InlineKeyboardButton(text=f'XPBoost[{xpboost}]', callback_data=f'switch xpboost {name}')
        xpboost_status =f"Disabled"
      else:
+       item_xp *= 1.25
+       item_xp_text = "[25% Increased]"
        xpboostactive = types.InlineKeyboardButton(text=f'・XPBoost・[{xpboost}]', callback_data=f'switch xpboost {name}')
        xpboost_status =f"Enabled"
      end_timer_text = await time_left(end_time_2)
-     end_timer_text = f"In *{end_timer_text}*"
-     txt = f"*[MINING AREA - {item_name.title()}]*\n\n - Mining Level: *{autominelvl}*\n - Total Mining: *{total_mine}*\n - MineX: *{minex_status}* | Inventory: *{minex}*\n - XPBoost: *{xpboost_status}* | Inventory: *{xpboost}*\n - Cooldown: *{cooldown} Seconds*\n\n - Estimated Ending Time: *{end_time_str}*\n - {end_timer_text}"
+     end_timer_text = f"In {end_timer_text}"
+     text = f"""
+```
+[MINING AREA - {item_name.upper()}]
+``````
+- Mining Level: {autominelvl}
+- Total Mining: {total_mine}
+``````
+- MineX: {minex_status}
+- XPBoost: {xpboost_status}
+``````
+- Cooldown: {cooldown} Seconds {item_cooldown_text}
+- Max XP: {round(item_xp)}XP {item_xp_text} 
+``````
+- Estimated Ending Time: {end_time_str}
+- {end_timer_text}
+```
+"""
      back_button = types.InlineKeyboardButton(text=f'🔙 Back', callback_data='back_mining')
      keyboard.add(minex_active,xpboostactive)
      keyboard.add(start_button)
      keyboard.add(back_button)
-     await bot.edit_message_text(txt,call.from_user.id,call.message.id,parse_mode="Markdown",reply_markup=keyboard)
+     await bot.edit_message_text(text,call.from_user.id,call.message.id,parse_mode="Markdown",reply_markup=keyboard)
    else:
     await bot.answer_callback_query(call.id,text=f"You Need {minlvl} Level To Access This Area",show_alert= True)
 
@@ -139,16 +162,15 @@ async def start_mine(call,name: str):
      await bot.answer_callback_query(call.id,text=f"You Need {minlvl} Level To Access This Area",show_alert= True)
    else:
      if minexactive == 1:
-       cooldown = item_cooldown/2
+       cooldown = item_cooldown * 0.75
        now_time = int(time.time())
-       end_time = int(end_time/2)
+       end_time = int(total_mine*cooldown)
        end_time_2 = int(end_time + now_time)
        if minex <= 0:
          minexactive = 0
        else:
          minexactive = 1
      else:
-       cooldown = item_cooldown
        now_time = int(time.time())
        end_time_2 = int(end_time + now_time)
      if xpboostactive == 1:
@@ -256,7 +278,12 @@ async def minemenu(call,message_id: int=0):
     keyboard.add(crimsteel_button)
     keyboard.add(gold_button,mythan_button,magic_button)
     keyboard.add(back_button)
-    txt = "*Select A Mining Area*\n*Accessible Area With 🟢 Sign*"
+    txt = f"""
+*Select A Mining Area*
+```
+Accessible Area With 🟢 Sign
+```
+"""
   else:
    if minex_on == 0:
      minex_status = "Disabled"
@@ -268,13 +295,13 @@ async def minemenu(call,message_id: int=0):
      xpboost_status = "Enabled"
    if end_time < int(time.time()):
      end_timer_text = await time_ago(end_time)
-     end_timer_text = f"Finished *{end_timer_text}* ago"
+     end_timer_text = f"Finished {end_timer_text} ago"
      claim_button = types.InlineKeyboardButton(text='🎁 Claim', callback_data='claim_mine')
      keyboard.add(claim_button)
      keyboard.add(back_button)
    else:
     end_timer_text = await time_left(end_time)
-    end_timer_text = f"In *{end_timer_text}*"
+    end_timer_text = f"In {end_timer_text}"
     refresh_button = types.InlineKeyboardButton(text='🔃 Refresh', callback_data='refresh_mining')
     cancel_button = types.InlineKeyboardButton(text=f'Cancel Mining', callback_data='cancel_ask')
     keyboard.add(refresh_button,cancel_button)
@@ -283,12 +310,28 @@ async def minemenu(call,message_id: int=0):
    dhaka_offset = timedelta(hours=6)  
    dt_dhaka = dt + dhaka_offset
    end_time_str = dt_dhaka.strftime('%I:%M:%S%p')
-   txt=f"*[MINING PROGRESS - {mining_item}]*\n\n - Estimated Ending Time: *{end_time_str}*\n - {end_timer_text}\n - MineX: *{minex_status}*\n - XPBoost: *{xpboost_status}*\n"
+   txt = f"""
+```
+[MINING PROGRESS - {mining_item}]
+``````
+- Estimated Ending Time: {end_time_str}
+- {end_timer_text}
+``````
+- MineX: {minex_status}
+- XPBoost: {xpboost_status}
+```
+"""
   await bot.edit_message_text(txt,call.from_user.id,message_id,parse_mode="Markdown",reply_markup=keyboard)
 # Cancel Mining Ask
 async def cancel_mine_ask(call):
    keyboard = types.InlineKeyboardMarkup()
-   text = "*Are You Sure ?*\n\nNote: *Please be informed that once an item is used during a mining operation, it is non refundable*"
+   text = f"""
+```
+Are You Sure ?
+``````
+Note: Please be informed that once an item is used during a mining operation, it is non refundable
+```
+"""
    yes_button = types.InlineKeyboardButton(text=f'Yes', callback_data='cancel_mine')
    no_button = types.InlineKeyboardButton(text=f'No', callback_data='mine')
    keyboard.add(yes_button,no_button)
@@ -329,19 +372,20 @@ async def claim_mine(call):
    else:
      totalamm = 0
      totalxp = 0
+     item_xp = getattr(config, f"max{mining_item}xp") 
+     item_amount = getattr(config, f"max{mining_item}") 
+     if xpboostactive == 1:
+       item_xp = int(item_xp * 1.25)
+       xpboost_on_1 = "[0.25x]"
+     else:
+       xpboost_on_1 = ""
      for i in range(1,total_mine+1):
-       maxamm = random.randint(1, config.maxiron)
+       maxamm = random.randint(1,item_amount)
        totalamm += maxamm
-       maxxp = random.randint(1, config.maxironxp)
+       maxxp = random.randint(1,item_xp)
        totalxp += maxxp
      totalamm = int(totalamm*itemmulti)
      totalxp = int(totalxp*xpmulti)
-     if xpboostactive == 1:
-       totalxp = totalxp*2
-       xpboost_on_1 = "[2x]"
-     else:
-       totalxp = totalxp
-       xpboost_on_1 = ""
      update = {"$set":{"automineon":0,"minex_on":0,"xpboost_on":0},"$inc": {mining_item: totalamm,"xp": totalxp,"mymine": total_mine}}
      await datack.update_one(query,update)
      i = 2
@@ -367,14 +411,22 @@ async def claim_mine(call):
          await bot.send_message(call.from_user.id,f"You Have Level Up To {totalup}")
       else:
        i = 0
-     print(time.time()-start)
      restart_button = types.InlineKeyboardButton(text=f'🔃 Restart', callback_data='back_mining')
      sell_button = types.InlineKeyboardButton(text=f'SELL {mining_item.upper()}', callback_data=f'sell no_edit {mining_item}')
      back_button = types.InlineKeyboardButton(text=f'🔙 Back',callback_data='main_menu')
      keyboard.add(restart_button,sell_button)
      keyboard.add(back_button)
-     txt = f"*[MINING FINISHED]*\n\n - Mined *{totalamm}* {mining_item.upper()} *[{itemmulti}x]*\n - Level Up *{totalup}* Times *{xpboost_on_1}**[{xpmulti}x]*\n - Add Extra *{extra_xp}* XP\n - Add *{total_mine}* Mine" 
-     await bot.edit_message_text(txt,call.from_user.id,call.message.id,parse_mode="Markdown",reply_markup=keyboard)
+     text = f"""
+```
+[MINING FINISHED]
+``````
+- Mined {totalamm} {mining_item.upper()} [{itemmulti}x]
+- Level Up {totalup} Times
+- Add Extra {extra_xp} XP {xpboost_on_1} [{xpmulti}x]
+- Add {total_mine} Mine
+```
+"""
+     await bot.edit_message_text(text,call.from_user.id,call.message.id,parse_mode="Markdown",reply_markup=keyboard)
 async def level_adjust(call):
    idx = str(call.from_user.id)
    db = client["user"]

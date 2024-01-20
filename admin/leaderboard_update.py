@@ -1,6 +1,9 @@
 import json 
 import time
 import aiofiles
+import asyncio
+import random
+import telebot
 
 import dns.resolver
 dns.resolver.default_resolver=dns.resolver.Resolver(configure=False)
@@ -66,11 +69,7 @@ async def request_update(message):
      mode = True
      await bot.send_message(message.chat.id,"Turned On")
      while True:
-       start = time.time()
-       print("Leadboard Updating...")
        await updateleaderboard()
-       end = time.time() - start
-       print(f"Leadboard Updated [ IT TOOK {end:.2f} SECOND ]")
        await asyncio.sleep(60)
    else:
      await bot.send_message(message.chat.id,"Already On")

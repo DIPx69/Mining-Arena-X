@@ -3,6 +3,7 @@ import aiofiles
 import json
 from telebot import  types
 import commands as command
+import asyncio
 
 import dns.resolver
 dns.resolver.default_resolver=dns.resolver.Resolver(configure=False)

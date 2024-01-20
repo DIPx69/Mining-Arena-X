@@ -1,5 +1,7 @@
 import config
 import time
+import asyncio
+
 from telebot import types
 
 import commands as command
@@ -74,9 +76,7 @@ Maximum Bet: {await command.numtotext(config.max_bet)}
      return 0
    query = {}
    values = [1,2,3,4,5,6]
-   cooldownx = (cooldown - nowtime)
-   cooldownx = cooldownx * -1
-   cooldownxx = (config.gamecooldown-cooldownx)-1
+   cooldownx = nowtime - cooldown
    if getcoin <= coin and getvalue in values and cooldownx >= config.gamecooldown and getcoin > 0 and ban == 0:
       text = f"""
 ```
@@ -137,9 +137,10 @@ Choose An Option Between 1\-6
 ```
  """
    elif cooldownx <= config.gamecooldown:
+     cooldown_time = (config.gamecooldown-cooldownx)
      text = f"""
 ```
-Try Again In {cooldownxx} Second
+Try Again In {cooldown_time} Second
 ```
 """
      await bot.reply_to(message,text,parse_mode="Markdown")

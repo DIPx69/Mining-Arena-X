@@ -26,7 +26,16 @@ async def buy_minex(call, reference):
    canbuy = int(coin / config.minexprice)
    buy_1st_txt = str(canbuy) if canbuy > 0 else ""
    buy_2nd_txt = str(int(canbuy/2)) if int(canbuy/2) > 0 else ""
-   txt = f"*[MINEX]*\n\n- Coin: *{coin_text}*\n- Current MineX: *{minex}*\n- MineX Price: *{await command.numtotext(config.minexprice)}*\n━━━━━━━━━━━━━━━━━━━━━━━━━━━\n*Click The Amount Or Use Custom*"
+   text = f"""
+*[MINEX]*
+```
+Coin: {coin_text}
+``````
+Current MineX: {await command.numtotext(minex)}
+``````
+MineX Price: {await command.numtotext(config.minexprice)}
+```━━━━━━━━━━━━━━━━━━━━━━━━━━━
+"""
    amount_buttons = [types.InlineKeyboardButton(text=str(i), callback_data=f'buy buy_minex {i} {reference}') if i*config.minexprice <= coin else types.InlineKeyboardButton(text="", callback_data=f'buy buy_minex {i} {reference}') for i in [1,2,3,4,5,6,7,8]]
    buy_1st = types.InlineKeyboardButton(text=buy_2nd_txt, callback_data=f'buy buy_minex {int(canbuy/2)} {reference}')
    buy_2nd = types.InlineKeyboardButton(text=buy_1st_txt, callback_data=f'buy buy_minex {canbuy} {reference}')
@@ -38,7 +47,7 @@ async def buy_minex(call, reference):
    keyboard.add(*amount_buttons)
    keyboard.add(buy_1st, buy_2nd)
    keyboard.add(buy_custom, minex_back)
-   await bot.edit_message_text(txt, call.from_user.id, call.message.id, parse_mode="Markdown", reply_markup=keyboard)
+   await bot.edit_message_text(text, call.from_user.id, call.message.id, parse_mode="Markdown", reply_markup=keyboard)
 
 async def buy_xpboost(call,reference):
    idx = str(call.from_user.id)
@@ -58,7 +67,16 @@ async def buy_xpboost(call,reference):
      buy_2nd_txt = f"{int(canbuy/2)}"
    else:
      buy_2nd_txt = f""
-   txt = f"*[XPBOOST]*\n\n- Coin: *{coin_text}*\n- Current XPBoost: *{xpboost}*\n- XPBoost Price: *{await command.numtotext(config.xpboostprice)}*\n━━━━━━━━━━━━━━━━━━━━━━━━━━━\n*Click The Amount Or Use Custom*"
+   text = f"""
+*[XPBOOST]*
+```
+Coin: {coin_text}
+``````
+Current XPBoost: {await command.numtotext(xpboost)}
+``````
+XPBoost Price: {await command.numtotext(config.xpboostprice)}
+```━━━━━━━━━━━━━━━━━━━━━━━━━━━
+"""
    amount_buttons = [types.InlineKeyboardButton(text=str(i), callback_data=f'buy buy_xpboost {i} {reference}') if i*config.xpboostprice <= coin else types.InlineKeyboardButton(text="", callback_data=f'buy buy_xpboost {i} {reference}') for i in [1,2,3,4,5,6,7,8]]
    buy_1st = types.InlineKeyboardButton(text=f'{buy_2nd_txt}',callback_data=f'buy buy_xpboost {int(canbuy/2)} {reference}')
    buy_2nd = types.InlineKeyboardButton(text=f'{buy_1st_txt}',callback_data=f'buy buy_xpboost {canbuy} {reference}')
@@ -69,19 +87,29 @@ async def buy_xpboost(call,reference):
    keyboard.add(*amount_buttons)
    keyboard.add(buy_1st,buy_2nd)
    keyboard.add(buy_custom,xpboost_back)
-   await bot.edit_message_text(txt,call.from_user.id,call.message.id,parse_mode="Markdown",reply_markup=keyboard)
+   await bot.edit_message_text(text,call.from_user.id,call.message.id,parse_mode="Markdown",reply_markup=keyboard)
 
 async def minex_custom(call):
   # await command.update_window(call)
-   txt = '*[MINEX]*\n\n*Enter The Amount You Want To Buy*'
+   text = f"""
+*[MINEX]*
+```
+Enter The Amount You Want To Buy
+```
+"""
    keyboard = types.ForceReply(selective=False,input_field_placeholder="Enter The Amount")
-   await bot.send_message(call.from_user.id,txt,parse_mode="Markdown",reply_markup=keyboard)
+   await bot.send_message(call.from_user.id,text,parse_mode="Markdown",reply_markup=keyboard)
 
 async def xpboost_custom(call):
  #  await command.update_window(call)
-   txt = '*[XPBOOST]*\n\n*Enter The Amount You Want To Buy*'
+   text = f"""
+*[XPBOOST]*
+```
+Enter The Amount You Want To Buy
+```
+"""
    keyboard = types.ForceReply(selective=False,input_field_placeholder="Enter The Amount")
-   await bot.send_message(call.from_user.id,txt,parse_mode="Markdown",reply_markup=keyboard)
+   await bot.send_message(call.from_user.id,text,parse_mode="Markdown",reply_markup=keyboard)
 
 async def minex_buy_confirm(message,ammout):
    filename = f'json_data/active_window.json'
@@ -99,19 +127,45 @@ async def minex_buy_confirm(message,ammout):
    try:
     ammout = int(ammout)
    except:
-    await asyncio.gather(bot.edit_message_text(f"*You need to provide a real amount*",message.chat.id,message_id,parse_mode="Markdown"),bot.delete_message(message.chat.id,message.reply_to_message.id),bot.delete_message(message.chat.id,message.id),command.send_home_v2(message))
+    text = f"""
+```
+You need to provide a real amount
+```
+"""
+    await asyncio.gather(bot.edit_message_text(text,message.chat.id,message_id,parse_mode="Markdown"),bot.delete_message(message.chat.id,message.reply_to_message.id),bot.delete_message(message.chat.id,message.id),command.send_home_v2(message))
     return 0
    totalcost = ammout*config.minexprice
    if ammout > 0:
     if totalcost <= coin:
       query = {}
       update = {'$inc': {'minex': ammout,'coin': -totalcost}}
-      await asyncio.gather(datack.update_one(query, update),bot.delete_message(message.chat.id,message.reply_to_message.id),bot.delete_message(message.chat.id,message.id),bot.edit_message_text(f"You Have Purchased *{await command.numtotext(ammout)}* MineX\n*{await command.numtotext(totalcost)}* Coin Removed From Your Account\nCurrent Coin: *{await command.numtotext(coin-totalcost)}*\nCurrent MineX: *{minex+ammout}*",message.chat.id,message_id,parse_mode="Markdown"),command.send_home_v2(message))
+      text = f"""
+```
+You Have Purchased {await command.numtotext(ammout)} MineX
+``````
+{await command.numtotext(totalcost)} Coin Removed From Your Account
+``````
+Current Coin: {await command.numtotext(coin-totalcost)}
+``````
+Current MineX: {minex+ammout}
+```
+"""
+      await asyncio.gather(datack.update_one(query, update),bot.delete_message(message.chat.id,message.reply_to_message.id),bot.delete_message(message.chat.id,message.id),bot.edit_message_text(text,message.chat.id,message_id,parse_mode="Markdown"),command.send_home_v2(message))
     else:
       more = ((coin - totalcost)*-1)
-      await asyncio.gather(bot.edit_message_text(f"You Need More *{await command.numtotext(more)}* Coin To Buy *{await command.numtotext(ammout)}* MineX",message.chat.id,message_id,parse_mode="Markdown"),bot.delete_message(message.chat.id,message.reply_to_message.id),bot.delete_message(message.chat.id,message.id),command.send_home_v2(message))
+      text = f"""
+```
+You Need More {await command.numtotext(more)} Coin To Buy {await command.numtotext(ammout)} MineX
+```
+"""
+      await asyncio.gather(bot.edit_message_text(text,message.chat.id,message_id,parse_mode="Markdown"),bot.delete_message(message.chat.id,message.reply_to_message.id),bot.delete_message(message.chat.id,message.id),command.send_home_v2(message))
    else:
-     await asyncio.gather(bot.edit_message_text(f"*You need to provide a real amount*",message.chat.id,message_id,parse_mode="Markdown"),bot.delete_message(message.chat.id,message.reply_to_message.id),bot.delete_message(message.chat.id,message.id),command.send_home_v2(message)) 
+     text = f"""
+```
+You need to provide a real amount
+```
+"""
+     await asyncio.gather(bot.edit_message_text(text,message.chat.id,message_id,parse_mode="Markdown"),bot.delete_message(message.chat.id,message.reply_to_message.id),bot.delete_message(message.chat.id,message.id),command.send_home_v2(message)) 
 
 async def xpboost_buy_confirm(message,ammout):
    filename = f'json_data/active_window.json'
@@ -129,19 +183,45 @@ async def xpboost_buy_confirm(message,ammout):
    try:
     ammout = int(ammout)
    except:
-     await asyncio.gather(bot.edit_message_text(f"*You need to provide a real amount*",message.chat.id,message_id,parse_mode="Markdown"),bot.delete_message(message.chat.id,message.reply_to_message.id),bot.delete_message(message.chat.id,message.id),command.send_home_v2(message))
+     text = f"""
+```
+You need to provide a real amount
+```
+"""
+     await asyncio.gather(bot.edit_message_text(text,message.chat.id,message_id,parse_mode="Markdown"),bot.delete_message(message.chat.id,message.reply_to_message.id),bot.delete_message(message.chat.id,message.id),command.send_home_v2(message))
      return 0
    totalcost = ammout*config.xpboostprice
    if ammout > 0:
      if totalcost <= coin:
        query = {}
        update = {'$inc': {'xpboost': ammout,'coin': -totalcost}}
-       await asyncio.gather(datack.update_one(query, update),bot.delete_message(message.chat.id,message.reply_to_message.id),bot.delete_message(message.chat.id,message.id),bot.edit_message_text(f"You Have Purchased *{await command.numtotext(ammout)}* XPBoost\n*{await command.numtotext(totalcost)}* Coin Removed From Your Account\nCurrent Coin: *{await command.numtotext(coin-totalcost)}*\nCurrent MineX: *{xpboost+ammout}*",message.chat.id,message_id,parse_mode="Markdown"),command.send_home_v2(message))
+       text = f"""
+```
+You Have Purchased {await command.numtotext(ammout)} XPBoost
+``````
+{await command.numtotext(totalcost)} Coin Removed From Your Account
+``````
+Current Coin: {await command.numtotext(coin-totalcost)}
+``````
+Current XPBoost: {xpboost+ammout}
+```
+"""
+       await asyncio.gather(datack.update_one(query, update),bot.delete_message(message.chat.id,message.reply_to_message.id),bot.delete_message(message.chat.id,message.id),bot.edit_message_text(text,message.chat.id,message_id,parse_mode="Markdown"),command.send_home_v2(message))
      else:
        more = ((coin - totalcost)*-1)
-       await asyncio.gather(bot.edit_message_text(f"You Need More *{await command.numtotext(more)}* Coin To Buy *{await command.numtotext(ammout)}* XPBoost",message.chat.id,message_id,parse_mode="Markdown"),bot.delete_message(message.chat.id,message.reply_to_message.id),bot.delete_message(message.chat.id,message.id),command.send_home_v2(message))
+       text = f"""
+```
+You Need More {await command.numtotext(more)} Coin To Buy {await command.numtotext(ammout)} XPBoost
+```
+"""
+       await asyncio.gather(bot.edit_message_text(text,message.chat.id,message_id,parse_mode="Markdown"),bot.delete_message(message.chat.id,message.reply_to_message.id),bot.delete_message(message.chat.id,message.id),command.send_home_v2(message))
    else:
-     await asyncio.gather(bot.edit_message_text(f"*You need to provide a real amount*",message.chat.id,message_id,parse_mode="Markdown"),bot.delete_message(message.chat.id,message.reply_to_message.id),bot.delete_message(message.chat.id,message.id),command.send_home_v2(message))
+     text = f"""
+```
+You need to provide a real amount
+```
+"""
+     await asyncio.gather(bot.edit_message_text(text,message.chat.id,message_id,parse_mode="Markdown"),bot.delete_message(message.chat.id,message.reply_to_message.id),bot.delete_message(message.chat.id,message.id),command.send_home_v2(message))
 async def minex_buy(call,reference,ammout):
    idx = str(call.from_user.id)
    db = client["user"]

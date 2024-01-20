@@ -1,6 +1,7 @@
 import os
 import config
 import time
+import asyncio
 
 import commands as command
 import slash_command as slash
@@ -59,9 +60,7 @@ Maximum Bet: {await command.numtotext(config.max_bet)}
      await bot.reply_to(message,"*You Need Start The Bot*",parse_mode="Markdown",reply_markup=markup)
      return 0
    query = {}
-   cooldownx = (cooldown - nowtime)
-   cooldownx = cooldownx * -1
-   cooldownxx = (config.gamecooldown-cooldownx)-1
+   cooldownx = nowtime - cooldown
    if getcoin <= coin and cooldownx >= config.gamecooldown and getcoin > 0 and ban == 0:
       nextcooldown = int(time.time())
       update = {'$set': {'gamecooldown': nextcooldown}}
@@ -83,7 +82,7 @@ Maximum Bet: {await command.numtotext(config.max_bet)}
       elif value == 1 or value == 2:
           updatecoin = getcoin*-1
           coinshow = updatecoin*-1
-          txt =f"😥 Miss\nYou Lost  ₪ {coinshow} Coin"
+          txt =f"😥 Miss\nYou Lost  ₪ {await command.numtotext(coinshow)} Coin"
           updatex = {'$inc':{"coin": updatecoin,'basketball_lose':1}}
       elif value == 3:
           updatecoin = getcoin*-1
@@ -121,9 +120,10 @@ You Don't Have Enough Money To Bet
 """
      await bot.reply_to(message,text,parse_mode="Markdown")
    elif cooldownx <= config.gamecooldown:
+       cooldown_time = (config.gamecooldown-cooldownx)
        text = f"""
 ```
-Try Again In {cooldownxx} Second
+Try Again In {cooldown_time} Second
 ```
 """
        await bot.reply_to(message,text,parse_mode="Markdown")

@@ -3,6 +3,7 @@ import json
 import config
 import time
 import random
+import asyncio
 import commands as command
 
 import dns.resolver
@@ -101,7 +102,16 @@ Maximum Bet: {await command.numtotext(config.max_bet)}
      pass
    db = client["user"]
    datack = db[str(get_opponent)]
-   datafind = await datack.find_one()
+   try:
+     datafind = await datack.find_one()
+   except:
+     text = f"""
+```
+Are You Sure !!!
+```
+"""
+     await bot.reply_to(message,text,parse_mode="Markdown")
+     return 0
    opponent_coin = datafind['coin']
    datack = db[str(message.from_user.id)]
    datafind = await datack.find_one()

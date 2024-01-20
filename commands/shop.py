@@ -1,7 +1,7 @@
 import config
 from telebot import  types
 import commands as command
-
+import re
 import dns.resolver
 dns.resolver.default_resolver=dns.resolver.Resolver(configure=False)
 dns.resolver.default_resolver.nameservers=['8.8.8.8']
@@ -20,7 +20,13 @@ async def shopmenu(call):
     keyboard.add(buy_button,sell_button)
     keyboard.add(farm_button)
     keyboard.add(back_button)
-    await bot.edit_message_text("*[SHOP]*\n\n*Select Option*",call.from_user.id,call.message.id,parse_mode="Markdown",reply_markup=keyboard)
+    text = f"""
+*[SHOP]*
+```
+Select Option
+```
+"""
+    await bot.edit_message_text(text,call.from_user.id,call.message.id,parse_mode="Markdown",reply_markup=keyboard)
 async def prestigeshop(call):
    keyboard = types.InlineKeyboardMarkup()
    idx = str(call.from_user.id)
@@ -35,15 +41,32 @@ async def prestigeshop(call):
    back_button = types.InlineKeyboardButton(text='🔙 Back', callback_data='shop')
    keyboard.add(itemmulti_button,xpmulti_button)
    keyboard.add(back_button)
-   txt =f'*[PRESTIGE SHOP]*\n\n - Prestige Coins: *{prestigecoin}*\n\n - Item Multiplier: *{itemmulti}x*\n - XP Multiplier: *{xpmulti}x*\n\n - Increase Boost By *{config.itemmul}x* with Prestige Coin\n'
-   await bot.edit_message_text(txt,call.from_user.id,call.message.id,parse_mode="Markdown",reply_markup=keyboard)
+   text = f"""
+*[PRESTIGE SHOP]*
+```
+Prestige Coins: {prestigecoin}
+- Item Multiplier: {itemmulti}x
+- XP Multiplier: {xpmulti}x
+``````⚠️
+Increase Boost By {config.itemmul}x with Prestige Coin
+```
+"""
+   await bot.edit_message_text(text,call.from_user.id,call.message.id,parse_mode="Markdown",reply_markup=keyboard)
 async def itemmulti_use_ask(call):
-  txt = f"*[ITEM MULTIPLIER]*\n\n{call.message.text}\n\n*Are You Sure ?*"
+  old_text = call.message.text
+  text_updated = re.sub(r'\[PRESTIGE SHOP\]\s*|Increase Boost By 0.25x with Prestige Coin','', old_text)
+  text = f"""
+*[ITEM MULTIPLIER]*
+```
+{text_updated}``````⚠️
+Are You Sure ?
+```
+"""
   keyboard = types.InlineKeyboardMarkup()
   confirm_button = types.InlineKeyboardButton(text='✅ Yes', callback_data='confirm_itemmulti')
   back_button = types.InlineKeyboardButton(text='🔙 Back', callback_data='prestige_shop')
   keyboard.add(confirm_button,back_button)
-  await bot.edit_message_text(txt,call.from_user.id,call.message.id,parse_mode="Markdown",reply_markup=keyboard)
+  await bot.edit_message_text(text,call.from_user.id,call.message.id,parse_mode="Markdown",reply_markup=keyboard)
 async def itemmulti_use(call):
    idx = str(call.from_user.id)
    db = client["user"]
@@ -54,25 +77,41 @@ async def itemmulti_use(call):
    query = {}
    if prestigecoin > 0:
      if itemmulti == 1:
-       txt = f'Item Multiplier Increased To *{1+config.itemmul}x*'
-       await bot.edit_message_text(txt,call.from_user.id,call.message.id,parse_mode="Markdown")
+       increased = 1+config.itemmul
        addmulti = {"$inc":{'itemmulti': +config.itemmul,'prestigecoin': -1}}
-       await datack.update_one(query,addmulti)
      else:
-      txt = f'Item Multiplier Increased To *{itemmulti+config.itemmul}x*'
-      await bot.edit_message_text(txt,call.from_user.id,call.message.id,parse_mode="Markdown")
+      increased = itemmulti + config.itemmul
       addmulti = {"$inc":{'itemmulti': +config.itemmul,'prestigecoin': -1}}
-      await datack.update_one(query,addmulti)
+     text = f"""
+```
+Item Multiplier Increased To {increased}x
+```
+"""
+     await bot.edit_message_text(text,call.from_user.id,call.message.id,parse_mode="Markdown")
+     await datack.update_one(query,addmulti)
    else:
-    await bot.edit_message_text("*You Don't Have Any Prestige Coin*",call.from_user.id,call.message.id,parse_mode="Markdown")
+    text = f"""
+```
+You Don't Have Any Prestige Coin
+```
+"""
+    await bot.edit_message_text(text,call.from_user.id,call.message.id,parse_mode="Markdown")
    return await command.send_home_v2(call.message)
 async def xpmulti_use_ask(call):
-  txt = f"*[XP MULTIPLIER]*\n\n{call.message.text}\n\n*Are You Sure ?*"
+  old_text = call.message.text
+  text_updated = re.sub(r'\[PRESTIGE SHOP\]\s*|Increase Boost By 0.25x with Prestige Coin','', old_text)
+  text = f"""
+*[XP MULTIPLIER]*
+```
+{text_updated}``````⚠️
+Are You Sure ?
+```
+"""
   keyboard = types.InlineKeyboardMarkup()
   confirm_button = types.InlineKeyboardButton(text='✅ Yes', callback_data='confirm_xpmulti')
   back_button = types.InlineKeyboardButton(text='🔙 Back', callback_data='prestige_shop')
   keyboard.add(confirm_button,back_button)
-  await bot.edit_message_text(txt,call.from_user.id,call.message.id,parse_mode="Markdown",reply_markup=keyboard)
+  await bot.edit_message_text(text,call.from_user.id,call.message.id,parse_mode="Markdown",reply_markup=keyboard)
 async def xpmulti_use(call):
    idx = str(call.from_user.id)
    db = client["user"]
@@ -83,26 +122,41 @@ async def xpmulti_use(call):
    query = {}
    if prestigecoin > 0:
      if xpmulti == 1:
-       txt = f'XP Multiplier Increased To *{1+config.xpmul}x*'
-       await bot.edit_message_text(txt,call.from_user.id,call.message.id,parse_mode="Markdown")
+       increased = 1 + config.xpmul
        addmulti = {"$inc":{'xpmulti': +config.xpmul,'prestigecoin': -1}}
-       await datack.update_one(query,addmulti)
      else:
-      txt = f'XP Multiplier Increased To *{xpmulti+config.xpmul}x*'
-      await bot.edit_message_text(txt,call.from_user.id,call.message.id,parse_mode="Markdown")
-      addmulti = {"$inc":{'xpmulti': +config.xpmul,'prestigecoin': -1}}
-      await datack.update_one(query,addmulti)
+       increased = xpmulti + config.xpmul
+       addmulti = {"$inc":{'xpmulti': +config.xpmul,'prestigecoin': -1}}
+     text = f"""
+```
+XP Multiplier Increased To {increased}x
+```
+"""
+     await bot.edit_message_text(text,call.from_user.id,call.message.id,parse_mode="Markdown")
+     await datack.update_one(query,addmulti)
    else:
-    await bot.edit_message_text("*You Don't Have Any Prestige Coin*",call.from_user.id,call.message.id,parse_mode="Markdown")
+    text = f"""
+```
+You Don't Have Any Prestige Coin
+```
+"""
+    await bot.edit_message_text(text,call.from_user.id,call.message.id,parse_mode="Markdown")
    return await command.send_home_v2(call.message)
 
 async def sell_items_all_ask(call,reference):
    keyboard = types.InlineKeyboardMarkup()
    sell_button = types.InlineKeyboardButton(text=f'Confirm',callback_data=f'sell xall {reference}')
    back_button = types.InlineKeyboardButton(text=f'Back',callback_data=f'sell menu {reference}')
-   txt = "*Are you sure that you want to sell all items ?*\n\n*You have the option to modify this confirmation in the settings*"
+   text = f"""
+```
+Are you sure that you want to sell all items ?
+```
+```⚠️
+You have the option to modify this confirmation in the settings
+```
+"""
    keyboard.add(sell_button,back_button)
-   await bot.edit_message_text(txt,call.from_user.id,call.message.id,parse_mode="Markdown",reply_markup=keyboard)
+   await bot.edit_message_text(text,call.from_user.id,call.message.id,parse_mode="Markdown",reply_markup=keyboard)
 
 async def sellmenu(call,reference):
    idx = str(call.from_user.id)
@@ -129,21 +183,20 @@ async def sellmenu(call,reference):
      sell_all_msg = "all_ask"
    else:
      sell_all_msg = "xall"
-   txt = f"""
+   text = f"""
 *Select Item To Sell*
-
-- Current Coin: *{coin}*
-
-*Price Table*
-- Iron: {iron_price} || *[{await command.numtotext(datafind['iron'])}]*
-- Coal: {coal_price} || *[{await command.numtotext(datafind['coal'])}]*
-- Silver: {silver_price} || *[{await command.numtotext(datafind['silver'])}]*
-- Crimsteel: {crimsteel_price} || *[{await command.numtotext(datafind['crimsteel'])}]*
-- Gold: {gold_price} || *[{await command.numtotext(datafind['gold'])}]*
-- Mythan: {mythan_price} || *[{await command.numtotext(datafind['mythan'])}]*
-- Magic: {magic_price} || *[{await command.numtotext(datafind['magic'])}]*
-
-⚠️ Warning: *Click The Item To Sell All*
+```
+Current Coin: {coin}
+``` Iron: {iron_price}
+Coal: {coal_price}
+Silver: {silver_price}
+Crimsteel: {crimsteel_price}
+Gold: {gold_price}
+Mythan: {mythan_price}
+Magic: {magic_price}
+```⚠️
+Warning: Click The Item To Sell All
+```
 """
    keyboard = types.InlineKeyboardMarkup()
    home_button = types.InlineKeyboardButton(text=f'🏡 Home', callback_data='main_menu')
@@ -164,7 +217,7 @@ async def sellmenu(call,reference):
    keyboard.add(sell_all_button)
    keyboard.add(home_button,back_button)
    try:
-     await bot.edit_message_text(txt,call.from_user.id,call.message.id,parse_mode="Markdown",reply_markup=keyboard)
+     await bot.edit_message_text(text,call.from_user.id,call.message.id,parse_mode="Markdown",reply_markup=keyboard)
    except:
      ...
 async def buymenu(call,reference):
@@ -177,14 +230,14 @@ async def buymenu(call,reference):
    xpboost = datafind["xpboost"]
    minex_price = config.minexprice
    xpboost_price = config.xpboostprice
-   txt = f"""
+   text = f"""
 *Select Item To Buy*
-
-- Current Coin: *{coin}*
-
-*Price Table*
-- MineX: {minex_price}
-- XP Boost: {xpboost_price}
+```
+Current Coin: {coin}
+``````Price
+MineX: {await command.numtotext(minex_price)}
+XP Boost: {await command.numtotext(xpboost_price)}
+```
 """
    keyboard = types.InlineKeyboardMarkup()
    home_button = types.InlineKeyboardButton(text=f'🏡 Home', callback_data='main_menu')
@@ -195,4 +248,4 @@ async def buymenu(call,reference):
    back_button = types.InlineKeyboardButton(text=f'🔙 Back', callback_data=reference)
    keyboard.add(minex_button,xpboost_button)
    keyboard.add(home_button,back_button)
-   await bot.edit_message_text(txt,call.from_user.id,call.message.id,parse_mode="Markdown",reply_markup=keyboard)
+   await bot.edit_message_text(text,call.from_user.id,call.message.id,parse_mode="Markdown",reply_markup=keyboard)

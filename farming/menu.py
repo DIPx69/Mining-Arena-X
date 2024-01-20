@@ -39,8 +39,7 @@ async def menu(call):
      name = "God"
    farming_text = f"""
 ```
-{name}'s Farm
-```
+{name}'s Farm```
 Progress
 """
    farming_text += await farm.progress_maker(tiles)
