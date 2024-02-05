@@ -25,6 +25,8 @@ async def profile(call):
    datafind = await datack.find_one()
    await command.mine_check(call,datafind)
    coin = await command.numtotext(datafind["coin"])
+   bank = await command.numtotext(datafind["bank"])
+   max_bank = await command.numtotext(datafind["max_bank"])
    lvl = datafind["lvl"]
    totalmine = datafind['mymine']
    xp = datafind['xp']
@@ -45,6 +47,7 @@ async def profile(call):
    football_lose = datafind["football_lose"]
    football_total = football_won+football_lose
    active_title = datafind["active_title"]
+   bank_full_percentage = f"{datafind['bank'] / datafind['max_bank'] * 100:.1f}"
    if xp >= nxtlvlxp:
       extra = xp-nxtlvlxp
       update = {
@@ -55,9 +58,12 @@ async def profile(call):
    text3 = f"""
 ```
 @{username} - {active_title}
-``````Balance
-- Coin: {coin}
+``````
 - ID: {idx}
+``````Balance
+- Pocket: {coin}
+- Bank: {bank} ({bank_full_percentage}% full)
+- Bankspace: {max_bank}
 ``````Prestige
 - Prestige Level: {prestigelvl}
 - Prestige Coin: {prestigecoin}

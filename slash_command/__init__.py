@@ -4,3 +4,7 @@ from .slash_lock import *
 from .inventory import *
 from .rate_limit_alert import *
 from .profile import *
+from .deposit import *
+from .withdraw import *
+from .balance import *
+from .rob import *

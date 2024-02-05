@@ -1,6 +1,6 @@
 # Config Verison 1.5
 status = "Changing TEXT UI"
-version = 2.2
+version = 2.3
 leaderboard_uptime_delay = 60
 # Game Cooldown 
 gamecooldown = 5
@@ -17,7 +17,7 @@ max_pickaxe_level = 150 # max pickaxe level
 extra_level_for_prestige = 25 # extra level for prestige
 
 # Daily Config
-max_water = 2
+max_water = 5
 
 # Item Price And Cooldown Config
 
@@ -98,8 +98,8 @@ watermelon = 900000  # 900,000
 watermelon_seeds = int(watermelon / 2) # 450,30000
 
 # Shop Data Config 
-minexprice = 50000
-xpboostprice = 80000
+minexprice = 1500000
+xpboostprice = 1690000
 ironprice = 30
 coalprice = 75
 silverprice = 150
@@ -116,6 +116,12 @@ maxcoin = 2500000
 # Prestige Shop Multi Config
 itemmul = 0.25
 xpmul = 0.25
+
+# Rob Config
+rob_victim_cooldown = 5 * 60
+rober_cooldown = 3 * 60
+minimum_rob = 50000
+minimum_for_rob = 5000
 
 # Game Bet Data
 min_bet = 10000 # 10k

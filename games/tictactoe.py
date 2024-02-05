@@ -70,7 +70,19 @@ async def confirmation(message):
       get_opponent = int(message.reply_to_message.from_user.id)
       coin_index = 1
      else:
-      get_opponent = int(message.text.split()[1])
+      data = message.text.split()
+      if int(len(data)) > 1:
+       args = message.text.split()[1]
+       if args.startswith("@"):
+         uid = await command.find_uid(args)
+         if uid:
+           get_opponent = uid
+         else:
+           raise ValueError("Username Not Found")
+       elif args.isdigit():
+         get_opponent = int(message.text.split()[1])
+      else:
+         raise ValueError("Username Not Found")
       coin_index = 2
    except:
      text = f"""
@@ -78,6 +90,7 @@ async def confirmation(message):
 Enter a Valid id
 ``````Example
 /ttc 1794942023
+/ttc @DipDey
 `````` Or Reply With A Message
 ```
 """

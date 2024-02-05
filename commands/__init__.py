@@ -29,3 +29,4 @@ from .minefinish import *
 from .trivia import *
 from .switch_pickaxe import *
 from .fixlvl import *
+from .find_user_id import *

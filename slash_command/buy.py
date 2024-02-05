@@ -101,11 +101,12 @@ We Will Automatically Complete Your Item Name
      print(name.lower())
      if name.lower() in seed_item:
        price = f"{name.lower()}s"
+       item_price = getattr(config, price)
+       cost = item_price*amount*config.multi_price
      else:
        price = f"{name.lower()}price"
-     item_price = getattr(config, price)
-     cost = item_price*amount
-     
+       item_price = getattr(config, price)
+       cost = item_price*amount
      if coin >= cost and str(message.from_user.id) not in slash_lock.pending and amount > 0:
        keyboard = types.InlineKeyboardMarkup()
        confirm_button = types.InlineKeyboardButton(text='Accept',callback_data=f'slash buy {name} {amount}')
@@ -189,10 +190,12 @@ async def buy_confirm(call,item_name,amount):
    item_amount = datafind[item_name]
    if item_name.lower() in seed_item:
      price = f"{item_name.lower()}s"
+     item_price = getattr(config, price)
+     cost = item_price*amount*config.multi_price
    else:
      price = f"{item_name.lower()}price"
-   item_price = getattr(config, price)
-   cost = item_price*amount
+     item_price = getattr(config, price)
+     cost = item_price*amount
    if cost <= coin:
      query = {}
      update = {'$inc': {item_name.lower(): amount,'coin': -cost}}

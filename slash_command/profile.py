@@ -12,18 +12,33 @@ dns.resolver.default_resolver.nameservers=['8.8.8.8']
 from commands.set_up import client
 from commands.set_up import bot
 
+
+
 async def profile(message):
   try:
     if message.reply_to_message is not None:
-      getid = int(message.reply_to_message.from_user.id)
-      getidx = str(message.reply_to_message.from_user.id)
+     getid = int(message.reply_to_message.from_user.id)
+     getidx = str(message.reply_to_message.from_user.id)
     else:
-      try:
-        getid = int(message.text.split()[1])
-        getidx = str(message.text.split()[1])
-      except:
+     data = message.text.split()
+     if int(len(data)) > 1:
+       args = message.text.split()[1]
+       if args.startswith("@"):
+         uid = await command.find_uid(args)
+         if uid:
+           getid = uid
+           getidx = str(uid)
+         else:
+           raise ValueError("Username Not Found")
+       elif args.isdigit():
+         getid = int(message.text.split()[1])
+         getidx = str(message.text.split()[1])
+       else:  
         getid = int(message.from_user.id)
         getidx = str(message.from_user.id)
+     else:
+       getid = int(message.from_user.id)
+       getidx = str(message.from_user.id)
     user = await bot.get_chat(getid)
     username = user.username
     db = client["user"]
@@ -50,13 +65,19 @@ async def profile(message):
     football_lose = datafind["football_lose"]
     football_total = football_won+football_lose
     active_title = datafind["active_title"]
+    bank = await command.numtotext(datafind["bank"])
+    max_bank = await command.numtotext(datafind["max_bank"])
+    bank_full_percentage = f"{datafind['bank'] / datafind['max_bank'] * 100:.1f}"
     if ban == 0:
       text = f"""
 ```
 @{username} - {active_title}
-``````Balance
-- Coin: {coin}
+``````
 - ID: {getidx}
+``````Balance
+- Pocket: {coin}
+- Bank: {bank} ({bank_full_percentage}% full)
+- Bankspace: {max_bank}
 ``````Prestige
 - Prestige Level: {prestigelvl}
 - Prestige Coin: {prestigecoin}

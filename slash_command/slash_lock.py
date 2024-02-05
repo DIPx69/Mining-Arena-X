@@ -33,7 +33,10 @@ Please finish any open commands*{message_link}
      return False
 async def print_log(message):
    global slash_command
-   print(message.from_user.username)
+   username = message.from_user.username
+   uid = message.from_user.id
+   text = message.text
+   print(f"{username} || {uid} || {text}")
 
 async def is_commander(call):
    data = call.json

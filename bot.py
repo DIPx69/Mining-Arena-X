@@ -47,6 +47,25 @@ uptime_start = time.time()
 anti_spam = {}
 use_anti_spam = {}
 
+# Slash Command || Only In Group Commands
+@bot.message_handler(func=lambda message: message.chat.type == 'private',commands=['roll','dart','basket','profile','ball','leaderboard','ttc','quiz','rob','r','p'])
+async def send_txt(message):
+    maintenance_info = await maintenance_check(message)
+    if maintenance_info == True:
+     return 0
+    markup = types.InlineKeyboardMarkup(row_width=1)
+    text = 'Join @MiningArenaChats'
+    url = 'https://t.me/MiningArenaChats'
+    button1 = types.InlineKeyboardButton(text=text, url=url)
+    markup.row(button1)
+    command_name = message.text.split()[0]
+    text = f"""
+```{command_name}
+{command_name} Command Is Only For Group
+```
+"""
+    await bot.send_message(message.chat.id,text,parse_mode="Markdown",reply_markup=markup)
+
 # Slash Command Integration [6 Jan]
 @bot.message_handler(commands=['buy','b'])
 async def buy(message):
@@ -58,6 +77,12 @@ async def buy(message):
    if status:
      await slash.buy(message)
      await slash.unlock(message)
+
+# Slash Command Integration [6 Jan]
+@bot.message_handler(commands=['restart','res'])
+async def restart(message):
+   if message.from_user.id == ownerid:
+     os.system('python bot.py')
  
 # Slash Command Integration [6 Jan]
 @bot.message_handler(commands=['sell','s'])
@@ -70,6 +95,42 @@ async def sell(message):
    if status:
      await slash.sell(message)
      await slash.unlock(message)
+
+# Slash Command Integration [6 Jan]
+@bot.message_handler(commands=['deposit','dep','d'])
+async def sell(message):
+   maintenance_info = await maintenance_check(message)
+   if maintenance_info == True:
+     return 0
+   await slash.print_log(message)
+   await slash.deposit(message)
+
+# Slash Command Integration [6 Jan]
+@bot.message_handler(commands=['withdraw','with','w'])
+async def withdraw(message):
+   maintenance_info = await maintenance_check(message)
+   if maintenance_info == True:
+     return 0
+   await slash.print_log(message)
+   await slash.withdraw(message)
+
+# Slash Command Integration [6 Jan]
+@bot.message_handler(commands=['rob','r'])
+async def withdraw(message):
+   maintenance_info = await maintenance_check(message)
+   if maintenance_info == True:
+     return 0
+   await slash.print_log(message)
+   await slash.rob(message)
+
+# Slash Command Integration [6 Jan]
+@bot.message_handler(commands=['balance','bal'])
+async def balance(message):
+   maintenance_info = await maintenance_check(message)
+   if maintenance_info == True:
+     return 0
+   await slash.print_log(message)
+   await slash.balance(message)
 
 # Slash Command Integration [6 Jan]
 @bot.message_handler(commands=['inventory','i'])
@@ -174,20 +235,6 @@ async def send_initial_button(message):
        await bot.send_message(message.chat.id,txt,parse_mode="MarkdownV2",reply_markup=markup) 
     else:
       await bot.reply_to(message,txt,parse_mode="MarkdownV2") 
-
-# Slash Command || Only In Group Commands
-@bot.message_handler(func=lambda message: message.chat.type == 'private',commands=['roll','dart','basket','profile','ball','leaderboard','ttc','quiz'])
-async def send_txt(message):
-    maintenance_info = await maintenance_check(message)
-    if maintenance_info == True:
-     return 0
-    markup = types.InlineKeyboardMarkup(row_width=1)
-    text = 'Join @MiningArenaChats'
-    url = 'https://t.me/MiningArenaChats'
-    button1 = types.InlineKeyboardButton(text=text, url=url)
-    markup.row(button1)
-    command_name = message.text.split()[0]
-    await bot.send_message(message.chat.id,f"{command_name} *Command Is Only For Official Group Chat*",parse_mode="Markdown",reply_markup=markup)
 
 # Slash Command || Game || /roll
 @bot.message_handler(func=lambda message: message.chat.type != 'private',commands=['roll'])
